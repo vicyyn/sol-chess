@@ -5,7 +5,7 @@ pub struct JoinGame<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    #[account(address=User::pda(payer.key()).0)]
+    #[account(mut,address=User::pda(payer.key()).0)]
     pub user: Account<'info, User>,
     #[account(mut)]
     pub game: Account<'info, Game>,
@@ -15,8 +15,10 @@ impl<'info> JoinGame<'info> {
         let Self { user, game, .. } = self;
 
         require!(game.color_available(color), CustomError::ColorNotAvailable);
-        game.join_game(user.key(), color);
+        // require!(user.not_in_game(), CustomError::UserAlreadyInGame);
 
+        user.set_game(game.key());
+        game.join_game(user.key(), color);
         Ok(())
     }
 }

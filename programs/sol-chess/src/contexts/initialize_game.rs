@@ -20,8 +20,6 @@ impl<'info> InitializeGame<'info> {
         require!(user.not_in_game(), CustomError::UserAlreadyInGame);
 
         user.increment_games();
-        user.set_game(game.key());
-
         game.new()?;
         Ok(())
     }

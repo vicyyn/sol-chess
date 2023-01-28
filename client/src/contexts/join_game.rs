@@ -10,7 +10,7 @@ pub fn join_game(
         program_id: sol_chess::ID,
         accounts: vec![
             AccountMeta::new(client.payer_pubkey(), true),
-            AccountMeta::new_readonly(user, false),
+            AccountMeta::new(user, false),
             AccountMeta::new(game, false),
         ],
         data: sol_chess::instruction::JoinGame { color }.data(),
