@@ -9,3 +9,13 @@ pub enum GameState {
     BlackWon,
     Draw,
 }
+
+impl GameState {
+    pub fn get_current_player_turn(&self) -> Color {
+        match self {
+            GameState::White => Color::White,
+            GameState::Black => Color::Black,
+            _ => panic!("Invalid Game State"),
+        }
+    }
+}

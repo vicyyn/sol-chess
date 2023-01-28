@@ -4,7 +4,7 @@ pub const SEED_GAME: &[u8] = b"game";
 
 #[account]
 pub struct Game {
-    pub board: [[Piece; 8]; 8],
+    pub board: Board,
     pub state: GameState,
     pub white: Option<Pubkey>,
     pub black: Option<Pubkey>,
@@ -16,6 +16,18 @@ impl Game {
             &[SEED_GAME, payer.as_ref(), &game_id.to_be_bytes()],
             &crate::ID,
         )
+    }
+
+    pub fn get_current_player_turn(&self) -> Pubkey {
+        if self.state.get_current_player_turn().is_white() {
+            self.white.unwrap()
+        } else {
+            self.black.unwrap()
+        }
+    }
+
+    pub fn move_piece(&mut self, from: Square, to: Square) {
+        self.board.move_piece(from, to);
     }
 
     pub fn join_game(&mut self, user: Pubkey, color: Color) {
