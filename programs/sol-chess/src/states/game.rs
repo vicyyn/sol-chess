@@ -45,6 +45,18 @@ impl Game {
             self.black.is_none()
         }
     }
+
+    pub fn is_full(&self) -> bool {
+        self.white.is_some() && self.black.is_some()
+    }
+
+    pub fn start_game(&mut self) {
+        self.state = GameState::White;
+    }
+
+    pub fn next_turn(&mut self) {
+        self.state = self.state.next_turn()
+    }
 }
 
 pub trait GameAccount {
@@ -53,6 +65,10 @@ pub trait GameAccount {
 
 impl GameAccount for Account<'_, Game> {
     fn new(&mut self) -> Result<()> {
+        self.board = Board::default();
+        self.state = GameState::Waiting;
+        self.white = None;
+        self.black = None;
         Ok(())
     }
 }

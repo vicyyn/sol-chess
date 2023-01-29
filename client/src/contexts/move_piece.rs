@@ -1,26 +1,27 @@
 use crate::*;
 
-pub fn join_game(
+pub fn move_piece(
     client: &Client,
     user: Pubkey,
     game: Pubkey,
-    color: sol_chess::Color,
+    from: sol_chess::Square,
+    to: sol_chess::Square,
 ) -> ClientResult<()> {
-    let join_game_ix = Instruction {
+    let move_piece_ix = Instruction {
         program_id: sol_chess::ID,
         accounts: vec![
             AccountMeta::new(client.payer_pubkey(), true),
             AccountMeta::new(user, false),
             AccountMeta::new(game, false),
         ],
-        data: sol_chess::instruction::JoinGame { color }.data(),
+        data: sol_chess::instruction::MovePiece { from, to }.data(),
     };
 
     send_and_confirm_tx(
         &client,
-        [join_game_ix].to_vec(),
+        [move_piece_ix].to_vec(),
         None,
-        "join_game".to_string(),
+        "move_piece".to_string(),
     )?;
 
     Ok(())

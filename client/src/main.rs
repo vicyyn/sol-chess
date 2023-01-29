@@ -25,6 +25,9 @@ fn main() -> ClientResult<()> {
     initialize_game(&client, user, game)?;
     join_game(&client, user, game, sol_chess::Color::White)?;
     join_game(&client, user, game, sol_chess::Color::Black)?;
+    let from = sol_chess::Square { file: 0, rank: 0 };
+    let to = sol_chess::Square { file: 0, rank: 5 };
+    move_piece(&client, user, game, from, to)?;
 
     Ok(())
 }

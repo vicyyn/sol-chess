@@ -20,7 +20,6 @@ impl<'info> MovePiece<'info> {
         );
 
         game.move_piece(from, to);
-
         Ok(())
     }
 }

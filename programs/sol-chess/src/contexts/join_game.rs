@@ -19,6 +19,10 @@ impl<'info> JoinGame<'info> {
 
         user.set_game(game.key());
         game.join_game(user.key(), color);
+
+        if game.is_full() {
+            game.start_game()
+        }
         Ok(())
     }
 }
