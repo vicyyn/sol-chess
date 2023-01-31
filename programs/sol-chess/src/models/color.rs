@@ -14,4 +14,22 @@ impl Color {
     pub fn is_black(&self) -> bool {
         self == &Color::Black
     }
+
+    pub fn get_pawn_direction(&self) -> i8 {
+        if self.is_white() {
+            return -1;
+        }
+        return 1;
+    }
+
+    pub fn is_opposite(&self, color: Color) -> bool {
+        self != &color
+    }
+
+    pub fn get_starting_pawn_rank(&self) -> u8 {
+        if self.is_white() {
+            return 6;
+        }
+        return 1;
+    }
 }

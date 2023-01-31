@@ -10,8 +10,8 @@ pub struct User {
 }
 
 impl User {
-    pub fn pda(user: Pubkey) -> (Pubkey, u8) {
-        Pubkey::find_program_address(&[SEED_USER, user.as_ref()], &crate::ID)
+    pub fn pda(owner: Pubkey) -> (Pubkey, u8) {
+        Pubkey::find_program_address(&[SEED_USER, owner.as_ref()], &crate::ID)
     }
 
     pub fn set_game(&mut self, game: Pubkey) {

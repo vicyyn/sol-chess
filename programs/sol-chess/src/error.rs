@@ -10,4 +10,6 @@ pub enum CustomError {
     InvalidGameState,
     #[msg("Not User's Turn")]
     NotUsersTurn,
+    #[msg("Invalid Move")]
+    InvalidMove,
 }

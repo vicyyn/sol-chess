@@ -15,11 +15,15 @@ impl<'info> MovePiece<'info> {
         let Self { user, game, .. } = self;
 
         require!(
-            user.key() == game.get_current_player_turn(),
+            user.key() == game.get_current_player_pubkey(),
             CustomError::NotUsersTurn
         );
 
-        game.move_piece(from, to);
+        if game.is_valid_move(from, to) {
+            game.move_piece(from, to);
+            game.next_turn();
+        }
+
         Ok(())
     }
 }

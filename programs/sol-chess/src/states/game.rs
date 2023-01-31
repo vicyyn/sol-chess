@@ -8,6 +8,7 @@ pub struct Game {
     pub state: GameState,
     pub white: Option<Pubkey>,
     pub black: Option<Pubkey>,
+    pub enpassant: Option<Square>,
 }
 
 impl Game {
@@ -18,11 +19,67 @@ impl Game {
         )
     }
 
-    pub fn get_current_player_turn(&self) -> Pubkey {
+    pub fn is_valid_move(&mut self, from: Square, to: Square) -> bool {
+        return match self.board.get_piece(from) {
+            Piece::WhitePawn | Piece::BlackPawn => self.is_valid_pawn_move(from, to),
+            _ => false,
+        };
+    }
+
+    pub fn is_valid_pawn_move(&mut self, from: Square, to: Square) -> bool {
+        let color = self.get_current_player_color();
+
+        // pawn steps
+        if self.board.get_piece(to).is_empty() {
+            // one step
+            if from.get_square_forward(color) == to {
+                return true;
+            }
+
+            // double step
+            if self
+                .board
+                .get_piece(from.get_square_forward(color))
+                .is_empty()
+                && from.get_square_double_forward(color) == to
+                && from.is_starting_pawn_square(color)
+            {
+                // set enpassant
+                self.enpassant = Some(from.get_square_forward(color));
+                return true;
+            }
+        }
+
+        // pawn eats
+        if from.get_square_forward_left(color) == to || from.get_square_forward_right(color) == to {
+            // regular eats
+            let piece = self.board.get_piece(to);
+            if piece.is_not_empty() && piece.get_color().is_opposite(color) {
+                return true;
+            }
+
+            // enpassant
+            if self.enpassant.is_some() && self.enpassant.unwrap() == to {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    pub fn get_current_player_pubkey(&self) -> Pubkey {
         if self.state.get_current_player_turn().is_white() {
             self.white.unwrap()
         } else {
             self.black.unwrap()
+        }
+    }
+
+    pub fn get_current_player_color(&self) -> Color {
+        if self.state.get_current_player_turn().is_white() {
+            return Color::White;
+        } else {
+            return Color::Black;
         }
     }
 
@@ -69,6 +126,7 @@ impl GameAccount for Account<'_, Game> {
         self.state = GameState::Waiting;
         self.white = None;
         self.black = None;
+        self.enpassant = None;
         Ok(())
     }
 }
