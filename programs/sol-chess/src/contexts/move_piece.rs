@@ -13,16 +13,20 @@ pub struct MovePiece<'info> {
 impl<'info> MovePiece<'info> {
     pub fn process(&mut self, from: Square, to: Square) -> Result<()> {
         let Self { user, game, .. } = self;
+        let color = game.get_current_player_color();
 
         require!(
             user.key() == game.get_current_player_pubkey(),
             CustomError::NotUsersTurn
         );
 
-        if game.is_valid_move(from, to) {
-            game.move_piece(from, to);
-            game.next_turn();
-        }
+        require!(
+            game.is_valid_move(color, from, to),
+            CustomError::InvalidMove
+        );
+
+        game.move_piece(color, from, to);
+        game.next_turn();
 
         Ok(())
     }

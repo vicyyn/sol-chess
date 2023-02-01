@@ -26,7 +26,7 @@ impl Color {
         self != &color
     }
 
-    pub fn get_starting_pawn_rank(&self) -> u8 {
+    pub fn get_starting_pawn_rank(&self) -> usize {
         if self.is_white() {
             return 6;
         }

@@ -1,4 +1,5 @@
 use crate::*;
+use std::cmp::{max, min};
 
 #[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, PartialEq)]
 pub struct Square {
@@ -144,9 +145,104 @@ impl Square {
     }
 
     pub fn is_starting_pawn_square(&self, color: Color) -> bool {
-        if self.rank == color.get_starting_pawn_rank() {
+        if self.get_rank() == color.get_starting_pawn_rank() {
             return true;
         }
         return false;
+    }
+
+    pub fn is_uppermost_rank_square(&self) -> bool {
+        if self.rank == 0 {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_lowermost_rank_square(&self) -> bool {
+        if self.rank == 7 {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_leftmost_file_square(&self) -> bool {
+        if self.file == 0 {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_rightmost_file_square(&self) -> bool {
+        if self.file == 7 {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_leftmost_file_square_relative(&self, color: Color) -> bool {
+        if color.is_white() {
+            return self.is_leftmost_file_square();
+        }
+        return self.is_rightmost_file_square();
+    }
+
+    pub fn is_rightmost_file_square_relative(&self, color: Color) -> bool {
+        if color.is_white() {
+            return self.is_rightmost_file_square();
+        }
+        return self.is_leftmost_file_square();
+    }
+
+    pub fn is_double_forward(&self, color: Color, from: Square) -> bool {
+        if color.get_starting_pawn_rank() == from.get_rank()
+            && &from.get_square_double_forward(color) == self
+        {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn get_upper_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        for rank in (self.rank + 1)..8 {
+            squares.push(Square {
+                rank,
+                file: self.file,
+            })
+        }
+        return squares;
+    }
+
+    pub fn get_lower_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        for rank in (self.rank..0).rev() {
+            squares.push(Square {
+                rank,
+                file: self.file,
+            })
+        }
+        return squares;
+    }
+
+    pub fn get_right_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        for file in self.file..8 {
+            squares.push(Square {
+                rank: self.rank,
+                file,
+            })
+        }
+        return squares;
+    }
+
+    pub fn get_left_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        for file in (self.file..0).rev() {
+            squares.push(Square {
+                rank: self.rank,
+                file,
+            })
+        }
+        return squares;
     }
 }

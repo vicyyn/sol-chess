@@ -19,6 +19,62 @@ impl Board {
         self.set_piece(Piece::Empty, from);
         self.set_piece(piece, to);
     }
+
+    pub fn eat_piece(&mut self, square: Square) {
+        self.board[square.get_rank()][square.get_file()] = Piece::Empty;
+    }
+
+    pub fn get_upper_squares_empty(&self, square: Square) -> Vec<Square> {
+        let mut squares = vec![];
+        let upper_squares = square.get_upper_squares();
+        for square in upper_squares {
+            if self.get_piece(square).is_empty() {
+                squares.push(square)
+            } else {
+                break;
+            }
+        }
+        return squares;
+    }
+
+    pub fn get_lower_squares_empty(&self, square: Square) -> Vec<Square> {
+        let mut squares = vec![];
+        let lower_squares = square.get_lower_squares();
+        for square in lower_squares {
+            if self.get_piece(square).is_empty() {
+                squares.push(square)
+            } else {
+                break;
+            }
+        }
+        return squares;
+    }
+
+    pub fn get_right_squares_empty(&self, square: Square) -> Vec<Square> {
+        let mut squares = vec![];
+        let right_squares = square.get_right_squares();
+        for square in right_squares {
+            if self.get_piece(square).is_empty() {
+                squares.push(square)
+            } else {
+                break;
+            }
+        }
+        return squares;
+    }
+
+    pub fn get_left_squares_empty(&self, square: Square) -> Vec<Square> {
+        let mut squares = vec![];
+        let left_squares = square.get_left_squares();
+        for square in left_squares {
+            if self.get_piece(square).is_empty() {
+                squares.push(square)
+            } else {
+                break;
+            }
+        }
+        return squares;
+    }
 }
 
 impl Default for Board {
