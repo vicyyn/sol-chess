@@ -24,6 +24,7 @@ impl Game {
             Piece::WhitePawn | Piece::BlackPawn => self.get_valid_pawn_moves(color, from),
             Piece::WhiteRook | Piece::BlackRook => self.get_valid_rook_moves(color, from),
             Piece::WhiteKnight | Piece::BlackKnight => self.get_valid_knight_moves(color, from),
+            Piece::WhiteBishop | Piece::BlackBishop => self.get_valid_bishop_moves(color, from),
             _ => vec![],
         };
 
@@ -121,6 +122,45 @@ impl Game {
             if piece.is_empty() || piece.get_color().is_opposite(color) {
                 valid_squares.push(jump);
             }
+        }
+
+        return valid_squares;
+    }
+
+    pub fn get_valid_bishop_moves(&self, color: Color, square: Square) -> Vec<Square> {
+        let mut valid_squares = vec![];
+
+        // move
+        valid_squares.extend(self.board.get_upper_right_squares_empty(square));
+        valid_squares.extend(self.board.get_lower_right_squares_empty(square));
+        valid_squares.extend(self.board.get_upper_left_squares_empty(square));
+        valid_squares.extend(self.board.get_lower_left_squares_empty(square));
+
+        // eat
+        let upper_right_piece = self.board.get_upper_right_piece(square);
+        if upper_right_piece.is_some()
+            && upper_right_piece.unwrap().0.get_color().is_opposite(color)
+        {
+            valid_squares.push(upper_right_piece.unwrap().1)
+        }
+
+        let upper_left_piece = self.board.get_upper_left_piece(square);
+        if upper_left_piece.is_some() && upper_left_piece.unwrap().0.get_color().is_opposite(color)
+        {
+            valid_squares.push(upper_left_piece.unwrap().1)
+        }
+
+        let lower_right_piece = self.board.get_lower_right_piece(square);
+        if lower_right_piece.is_some()
+            && lower_right_piece.unwrap().0.get_color().is_opposite(color)
+        {
+            valid_squares.push(lower_right_piece.unwrap().1)
+        }
+
+        let lower_left_piece = self.board.get_lower_left_piece(square);
+        if lower_left_piece.is_some() && lower_left_piece.unwrap().0.get_color().is_opposite(color)
+        {
+            valid_squares.push(lower_left_piece.unwrap().1)
         }
 
         return valid_squares;

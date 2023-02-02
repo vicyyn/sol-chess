@@ -332,4 +332,64 @@ impl Square {
         squares.extend(self.get_knight_left_jumps());
         return squares;
     }
+
+    pub fn get_upper_right_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        let mut current_square = self.clone();
+
+        while !current_square.is_uppermost_rank_square()
+            && !current_square.is_rightmost_file_square()
+        {
+            let upper_right_square = current_square.get_square_up().get_square_right();
+            squares.push(upper_right_square);
+            current_square = upper_right_square.clone();
+        }
+
+        return squares;
+    }
+
+    pub fn get_lower_right_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        let mut current_square = self.clone();
+
+        while !current_square.is_lowermost_rank_square()
+            && !current_square.is_rightmost_file_square()
+        {
+            let lower_right_square = current_square.get_square_down().get_square_right();
+            squares.push(lower_right_square);
+            current_square = lower_right_square.clone();
+        }
+
+        return squares;
+    }
+
+    pub fn get_upper_left_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        let mut current_square = self.clone();
+
+        while !current_square.is_uppermost_rank_square()
+            && !current_square.is_leftmost_file_square()
+        {
+            let upper_left_square = current_square.get_square_up().get_square_left();
+            squares.push(upper_left_square);
+            current_square = upper_left_square.clone();
+        }
+
+        return squares;
+    }
+
+    pub fn get_lower_left_squares(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        let mut current_square = self.clone();
+
+        while !current_square.is_lowermost_rank_square()
+            && !current_square.is_leftmost_file_square()
+        {
+            let lower_left_square = current_square.get_square_down().get_square_left();
+            squares.push(lower_left_square);
+            current_square = lower_left_square.clone();
+        }
+
+        return squares;
+    }
 }

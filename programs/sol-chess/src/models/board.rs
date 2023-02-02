@@ -24,100 +24,106 @@ impl Board {
         self.board[square.get_rank()][square.get_file()] = Piece::Empty;
     }
 
-    pub fn get_upper_squares_empty(&self, square: Square) -> Vec<Square> {
-        let mut squares = vec![];
-        let upper_squares = square.get_upper_squares();
-        for square in upper_squares {
+    pub fn get_empty_squares(&self, squares: Vec<Square>) -> Vec<Square> {
+        let mut empty_squares = vec![];
+        for square in squares {
             if self.get_piece(square).is_empty() {
-                squares.push(square)
+                empty_squares.push(square)
             } else {
                 break;
             }
         }
-        return squares;
+        return empty_squares;
+    }
+
+    pub fn get_first_non_empty_square(&self, squares: Vec<Square>) -> Option<(Piece, Square)> {
+        for square in squares {
+            let piece = self.get_piece(square);
+            if piece.is_not_empty() {
+                return Some((piece, square));
+            }
+        }
+        return None;
+    }
+
+    pub fn get_upper_squares_empty(&self, square: Square) -> Vec<Square> {
+        let upper_squares = square.get_upper_squares();
+        return self.get_empty_squares(upper_squares);
     }
 
     pub fn get_lower_squares_empty(&self, square: Square) -> Vec<Square> {
-        let mut squares = vec![];
         let lower_squares = square.get_lower_squares();
-        for square in lower_squares {
-            if self.get_piece(square).is_empty() {
-                squares.push(square)
-            } else {
-                break;
-            }
-        }
-        return squares;
+        return self.get_empty_squares(lower_squares);
     }
 
     pub fn get_right_squares_empty(&self, square: Square) -> Vec<Square> {
-        let mut squares = vec![];
         let right_squares = square.get_right_squares();
-        for square in right_squares {
-            if self.get_piece(square).is_empty() {
-                squares.push(square)
-            } else {
-                break;
-            }
-        }
-        return squares;
+        return self.get_empty_squares(right_squares);
     }
 
     pub fn get_left_squares_empty(&self, square: Square) -> Vec<Square> {
-        let mut squares = vec![];
         let left_squares = square.get_left_squares();
-        for square in left_squares {
-            if self.get_piece(square).is_empty() {
-                squares.push(square)
-            } else {
-                break;
-            }
-        }
-        return squares;
+        return self.get_empty_squares(left_squares);
     }
 
     pub fn get_upper_piece(&self, square: Square) -> Option<(Piece, Square)> {
         let upper_squares = square.get_upper_squares();
-        for square in upper_squares {
-            let piece = self.get_piece(square);
-            if piece.is_not_empty() {
-                return Some((piece, square));
-            }
-        }
-        return None;
+        return self.get_first_non_empty_square(upper_squares);
     }
 
     pub fn get_lower_piece(&self, square: Square) -> Option<(Piece, Square)> {
         let lower_squares = square.get_lower_squares();
-        for square in lower_squares {
-            let piece = self.get_piece(square);
-            if piece.is_not_empty() {
-                return Some((piece, square));
-            }
-        }
-        return None;
+        return self.get_first_non_empty_square(lower_squares);
     }
 
     pub fn get_right_piece(&self, square: Square) -> Option<(Piece, Square)> {
         let right_squares = square.get_right_squares();
-        for square in right_squares {
-            let piece = self.get_piece(square);
-            if piece.is_not_empty() {
-                return Some((piece, square));
-            }
-        }
-        return None;
+        return self.get_first_non_empty_square(right_squares);
     }
 
     pub fn get_left_piece(&self, square: Square) -> Option<(Piece, Square)> {
         let left_squares = square.get_left_squares();
-        for square in left_squares {
-            let piece = self.get_piece(square);
-            if piece.is_not_empty() {
-                return Some((piece, square));
-            }
-        }
-        return None;
+        return self.get_first_non_empty_square(left_squares);
+    }
+
+    pub fn get_upper_right_squares_empty(&self, square: Square) -> Vec<Square> {
+        let upper_right_squares = square.get_upper_right_squares();
+        return self.get_empty_squares(upper_right_squares);
+    }
+
+    pub fn get_lower_right_squares_empty(&self, square: Square) -> Vec<Square> {
+        let lower_right_squares = square.get_lower_right_squares();
+        return self.get_empty_squares(lower_right_squares);
+    }
+
+    pub fn get_upper_left_squares_empty(&self, square: Square) -> Vec<Square> {
+        let upper_left_squares = square.get_upper_left_squares();
+        return self.get_empty_squares(upper_left_squares);
+    }
+
+    pub fn get_lower_left_squares_empty(&self, square: Square) -> Vec<Square> {
+        let lower_left_squares = square.get_lower_left_squares();
+        return self.get_empty_squares(lower_left_squares);
+    }
+
+    pub fn get_upper_right_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let upper_right_squares = square.get_upper_right_squares();
+        return self.get_first_non_empty_square(upper_right_squares);
+    }
+
+    pub fn get_upper_left_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let upper_left_squares = square.get_upper_left_squares();
+        return self.get_first_non_empty_square(upper_left_squares);
+    }
+
+    pub fn get_lower_right_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let lower_right_squares = square.get_lower_right_squares();
+        return self.get_first_non_empty_square(lower_right_squares);
+    }
+
+    pub fn get_lower_left_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let lower_left_squares = square.get_lower_left_squares();
+        return self.get_first_non_empty_square(lower_left_squares);
     }
 }
 
