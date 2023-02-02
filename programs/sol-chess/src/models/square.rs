@@ -202,7 +202,7 @@ impl Square {
         return false;
     }
 
-    pub fn get_upper_squares(&self) -> Vec<Square> {
+    pub fn get_lower_squares(&self) -> Vec<Square> {
         let mut squares = vec![];
         for rank in (self.rank + 1)..8 {
             squares.push(Square {
@@ -213,9 +213,9 @@ impl Square {
         return squares;
     }
 
-    pub fn get_lower_squares(&self) -> Vec<Square> {
+    pub fn get_upper_squares(&self) -> Vec<Square> {
         let mut squares = vec![];
-        for rank in (self.rank..0).rev() {
+        for rank in (0..self.rank).rev() {
             squares.push(Square {
                 rank,
                 file: self.file,
@@ -226,7 +226,7 @@ impl Square {
 
     pub fn get_right_squares(&self) -> Vec<Square> {
         let mut squares = vec![];
-        for file in self.file..8 {
+        for file in (self.file + 1)..8 {
             squares.push(Square {
                 rank: self.rank,
                 file,
@@ -237,7 +237,7 @@ impl Square {
 
     pub fn get_left_squares(&self) -> Vec<Square> {
         let mut squares = vec![];
-        for file in (self.file..0).rev() {
+        for file in (0..self.file).rev() {
             squares.push(Square {
                 rank: self.rank,
                 file,

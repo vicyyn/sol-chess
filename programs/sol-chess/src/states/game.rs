@@ -20,11 +20,17 @@ impl Game {
     }
 
     pub fn is_valid_move(&self, color: Color, from: Square, to: Square) -> bool {
-        return match self.board.get_piece(from) {
-            Piece::WhitePawn | Piece::BlackPawn => self.is_valid_pawn_move(color, from, to),
-            Piece::WhiteRook | Piece::BlackRook => self.is_valid_rook_move(color, from, to),
-            _ => false,
+        let valid_moves = match self.board.get_piece(from) {
+            Piece::WhitePawn | Piece::BlackPawn => self.get_valid_pawn_moves(color, from),
+            Piece::WhiteRook | Piece::BlackRook => self.get_valid_rook_moves(color, from),
+            Piece::WhiteKnight | Piece::BlackKnight => self.get_valid_knight_moves(color, from),
+            _ => vec![],
         };
+
+        if valid_moves.contains(&to) {
+            return true;
+        }
+        return false;
     }
 
     pub fn get_valid_pawn_moves(&self, color: Color, square: Square) -> Vec<Square> {
@@ -76,10 +82,34 @@ impl Game {
 
     pub fn get_valid_rook_moves(&self, color: Color, square: Square) -> Vec<Square> {
         let mut valid_squares = vec![];
+
+        // move
         valid_squares.extend(self.board.get_upper_squares_empty(square));
         valid_squares.extend(self.board.get_lower_squares_empty(square));
         valid_squares.extend(self.board.get_right_squares_empty(square));
         valid_squares.extend(self.board.get_left_squares_empty(square));
+
+        // eat
+        let upper_piece = self.board.get_upper_piece(square);
+        if upper_piece.is_some() && upper_piece.unwrap().0.get_color().is_opposite(color) {
+            valid_squares.push(upper_piece.unwrap().1)
+        }
+
+        let lower_piece = self.board.get_lower_piece(square);
+        if lower_piece.is_some() && lower_piece.unwrap().0.get_color().is_opposite(color) {
+            valid_squares.push(lower_piece.unwrap().1)
+        }
+
+        let right_piece = self.board.get_right_piece(square);
+        if right_piece.is_some() && right_piece.unwrap().0.get_color().is_opposite(color) {
+            valid_squares.push(right_piece.unwrap().1)
+        }
+
+        let left_piece = self.board.get_left_piece(square);
+        if left_piece.is_some() && left_piece.unwrap().0.get_color().is_opposite(color) {
+            valid_squares.push(left_piece.unwrap().1)
+        }
+
         return valid_squares;
     }
 
@@ -103,22 +133,6 @@ impl Game {
         };
 
         self.board.move_piece(from, to);
-    }
-
-    pub fn is_valid_pawn_move(&self, color: Color, from: Square, to: Square) -> bool {
-        let valid_pawn_moves = self.get_valid_pawn_moves(color, from);
-        if valid_pawn_moves.contains(&to) {
-            return true;
-        }
-        return false;
-    }
-
-    pub fn is_valid_rook_move(&self, color: Color, from: Square, to: Square) -> bool {
-        let valid_rook_moves = self.get_valid_rook_moves(color, from);
-        if valid_rook_moves.contains(&to) {
-            return true;
-        }
-        return false;
     }
 
     pub fn get_current_player_pubkey(&self) -> Pubkey {

@@ -75,6 +75,50 @@ impl Board {
         }
         return squares;
     }
+
+    pub fn get_upper_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let upper_squares = square.get_upper_squares();
+        for square in upper_squares {
+            let piece = self.get_piece(square);
+            if piece.is_not_empty() {
+                return Some((piece, square));
+            }
+        }
+        return None;
+    }
+
+    pub fn get_lower_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let lower_squares = square.get_lower_squares();
+        for square in lower_squares {
+            let piece = self.get_piece(square);
+            if piece.is_not_empty() {
+                return Some((piece, square));
+            }
+        }
+        return None;
+    }
+
+    pub fn get_right_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let right_squares = square.get_right_squares();
+        for square in right_squares {
+            let piece = self.get_piece(square);
+            if piece.is_not_empty() {
+                return Some((piece, square));
+            }
+        }
+        return None;
+    }
+
+    pub fn get_left_piece(&self, square: Square) -> Option<(Piece, Square)> {
+        let left_squares = square.get_left_squares();
+        for square in left_squares {
+            let piece = self.get_piece(square);
+            if piece.is_not_empty() {
+                return Some((piece, square));
+            }
+        }
+        return None;
+    }
 }
 
 impl Default for Board {
