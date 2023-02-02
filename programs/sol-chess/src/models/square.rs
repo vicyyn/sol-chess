@@ -1,7 +1,7 @@
 use crate::*;
-use std::cmp::{max, min};
+use std::{collections::HashSet, iter::FromIterator};
 
-#[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, PartialEq)]
+#[derive(Copy, Clone, Debug, AnchorSerialize, AnchorDeserialize, PartialEq, Hash, Eq)]
 pub struct Square {
     pub rank: u8,
     pub file: u8,
@@ -62,28 +62,28 @@ impl Square {
 
     pub fn get_square_up_right(&self) -> Square {
         return Square {
-            rank: self.rank + 1,
+            rank: self.rank - 1,
             file: self.file + 1,
         };
     }
 
     pub fn get_square_up_left(&self) -> Square {
         return Square {
-            rank: self.rank + 1,
+            rank: self.rank - 1,
             file: self.file - 1,
         };
     }
 
     pub fn get_square_down_right(&self) -> Square {
         return Square {
-            rank: self.rank - 1,
+            rank: self.rank + 1,
             file: self.file + 1,
         };
     }
 
     pub fn get_square_down_left(&self) -> Square {
         return Square {
-            rank: self.rank - 1,
+            rank: self.rank + 1,
             file: self.file - 1,
         };
     }
@@ -391,5 +391,86 @@ impl Square {
         }
 
         return squares;
+    }
+
+    pub fn get_upper_adjacent_squares(&self) -> Vec<Square> {
+        if self.is_uppermost_rank_square() {
+            return vec![];
+        } else if self.is_rightmost_file_square() {
+            return vec![self.get_square_up(), self.get_square_up_left()];
+        } else if self.is_leftmost_file_square() {
+            return vec![self.get_square_up(), self.get_square_up_right()];
+        } else {
+            return vec![
+                self.get_square_up(),
+                self.get_square_up_right(),
+                self.get_square_up_left(),
+            ];
+        }
+    }
+
+    pub fn get_lower_adjacent_squares(&self) -> Vec<Square> {
+        if self.is_lowermost_rank_square() {
+            return vec![];
+        } else if self.is_rightmost_file_square() {
+            return vec![self.get_square_down(), self.get_square_down_left()];
+        } else if self.is_leftmost_file_square() {
+            return vec![self.get_square_down(), self.get_square_down_right()];
+        } else {
+            return vec![
+                self.get_square_down(),
+                self.get_square_down_right(),
+                self.get_square_down_left(),
+            ];
+        }
+    }
+
+    pub fn get_right_adjacent_squares(&self) -> Vec<Square> {
+        if self.is_rightmost_file_square() {
+            return vec![];
+        } else if self.is_uppermost_rank_square() {
+            return vec![self.get_square_right(), self.get_square_down_right()];
+        } else if self.is_lowermost_rank_square() {
+            return vec![self.get_square_right(), self.get_square_up_right()];
+        } else {
+            return vec![
+                self.get_square_right(),
+                self.get_square_up_right(),
+                self.get_square_down_right(),
+            ];
+        }
+    }
+
+    pub fn get_left_adjacent_squares(&self) -> Vec<Square> {
+        if self.is_leftmost_file_square() {
+            return vec![];
+        } else if self.is_uppermost_rank_square() {
+            return vec![self.get_square_left(), self.get_square_down_left()];
+        } else if self.is_lowermost_rank_square() {
+            return vec![self.get_square_left(), self.get_square_up_left()];
+        } else {
+            return vec![
+                self.get_square_left(),
+                self.get_square_up_left(),
+                self.get_square_down_left(),
+            ];
+        }
+    }
+
+    pub fn get_adjacent_squares(&self) -> Vec<Square> {
+        let mut squares: HashSet<Square> = HashSet::new();
+
+        squares.extend::<HashSet<Square>>(HashSet::from_iter(self.get_upper_adjacent_squares()));
+        squares.extend::<HashSet<Square>>(
+            HashSet::from_iter(self.get_lower_adjacent_squares()) as HashSet<Square>
+        );
+        squares.extend::<HashSet<Square>>(
+            HashSet::from_iter(self.get_right_adjacent_squares()) as HashSet<Square>
+        );
+        squares.extend::<HashSet<Square>>(
+            HashSet::from_iter(self.get_left_adjacent_squares()) as HashSet<Square>
+        );
+
+        return Vec::from_iter(squares);
     }
 }

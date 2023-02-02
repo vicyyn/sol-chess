@@ -26,6 +26,7 @@ impl Game {
             Piece::WhiteKnight | Piece::BlackKnight => self.get_valid_knight_moves(color, from),
             Piece::WhiteBishop | Piece::BlackBishop => self.get_valid_bishop_moves(color, from),
             Piece::WhiteQueen | Piece::BlackQueen => self.get_valid_queen_moves(color, from),
+            Piece::WhiteKing | Piece::BlackKing => self.get_valid_king_moves(color, from),
             _ => vec![],
         };
 
@@ -172,6 +173,19 @@ impl Game {
 
         valid_squares.extend(self.get_valid_rook_moves(color, square));
         valid_squares.extend(self.get_valid_bishop_moves(color, square));
+
+        return valid_squares;
+    }
+
+    pub fn get_valid_king_moves(&self, color: Color, square: Square) -> Vec<Square> {
+        let mut valid_squares = vec![];
+
+        for adjacent_square in square.get_adjacent_squares() {
+            let piece = self.board.get_piece(adjacent_square);
+            if piece.is_empty() || piece.get_color().is_opposite(color) {
+                valid_squares.push(adjacent_square);
+            }
+        }
 
         return valid_squares;
     }
