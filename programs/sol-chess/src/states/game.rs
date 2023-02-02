@@ -113,6 +113,19 @@ impl Game {
         return valid_squares;
     }
 
+    pub fn get_valid_knight_moves(&self, color: Color, square: Square) -> Vec<Square> {
+        let mut valid_squares = vec![];
+
+        for jump in square.get_knight_jumps() {
+            let piece = self.board.get_piece(jump);
+            if piece.is_empty() || piece.get_color().is_opposite(color) {
+                valid_squares.push(jump);
+            }
+        }
+
+        return valid_squares;
+    }
+
     pub fn move_piece(&mut self, color: Color, from: Square, to: Square) {
         let current_enpassant = self.enpassant.clone();
         self.reset_enpassant();

@@ -172,8 +172,22 @@ impl Square {
         return false;
     }
 
+    pub fn is_before_leftmost_file_square(&self) -> bool {
+        if self.file == 1 {
+            return true;
+        }
+        return false;
+    }
+
     pub fn is_rightmost_file_square(&self) -> bool {
         if self.file == 7 {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_before_rightmost_file_square(&self) -> bool {
+        if self.file == 6 {
             return true;
         }
         return false;
@@ -243,6 +257,79 @@ impl Square {
                 file,
             })
         }
+        return squares;
+    }
+
+    pub fn get_knight_upper_jumps(&self) -> Vec<Square> {
+        if self.is_starting_pawn_square(Color::Black) || self.is_uppermost_rank_square() {
+            return vec![];
+        } else if self.is_leftmost_file_square() {
+            let upper_right_jump = self.get_square_up().get_square_up().get_square_right();
+            return vec![upper_right_jump];
+        } else if self.is_rightmost_file_square() {
+            let upper_left_jump = self.get_square_up().get_square_up().get_square_left();
+            return vec![upper_left_jump];
+        } else {
+            let upper_right_jump = self.get_square_up().get_square_up().get_square_left();
+            let upper_left_jump = self.get_square_up().get_square_up().get_square_right();
+            return vec![upper_left_jump, upper_right_jump];
+        }
+    }
+
+    pub fn get_knight_lower_jumps(&self) -> Vec<Square> {
+        if self.is_starting_pawn_square(Color::White) || self.is_lowermost_rank_square() {
+            return vec![];
+        } else if self.is_leftmost_file_square() {
+            let lower_right_jump = self.get_square_down().get_square_down().get_square_right();
+            return vec![lower_right_jump];
+        } else if self.is_rightmost_file_square() {
+            let lower_left_jump = self.get_square_down().get_square_down().get_square_left();
+            return vec![lower_left_jump];
+        } else {
+            let lower_right_jump = self.get_square_down().get_square_down().get_square_left();
+            let lower_left_jump = self.get_square_down().get_square_down().get_square_right();
+            return vec![lower_left_jump, lower_right_jump];
+        }
+    }
+
+    pub fn get_knight_right_jumps(&self) -> Vec<Square> {
+        if self.is_rightmost_file_square() || self.is_before_rightmost_file_square() {
+            return vec![];
+        } else if self.is_uppermost_rank_square() {
+            let right_lower_jump = self.get_square_right().get_square_right().get_square_down();
+            return vec![right_lower_jump];
+        } else if self.is_lowermost_rank_square() {
+            let right_upper_jump = self.get_square_right().get_square_right().get_square_up();
+            return vec![right_upper_jump];
+        } else {
+            let right_lower_jump = self.get_square_right().get_square_right().get_square_down();
+            let right_upper_jump = self.get_square_right().get_square_right().get_square_up();
+            return vec![right_upper_jump, right_lower_jump];
+        }
+    }
+
+    pub fn get_knight_left_jumps(&self) -> Vec<Square> {
+        if self.is_leftmost_file_square() || self.is_before_leftmost_file_square() {
+            return vec![];
+        } else if self.is_uppermost_rank_square() {
+            let left_lower_jump = self.get_square_left().get_square_left().get_square_down();
+            return vec![left_lower_jump];
+        } else if self.is_lowermost_rank_square() {
+            let left_upper_jump = self.get_square_left().get_square_left().get_square_up();
+            return vec![left_upper_jump];
+        } else {
+            let left_lower_jump = self.get_square_left().get_square_left().get_square_down();
+            let left_upper_jump = self.get_square_left().get_square_left().get_square_up();
+            return vec![left_upper_jump, left_lower_jump];
+        }
+    }
+
+    pub fn get_knight_jumps(&self) -> Vec<Square> {
+        let mut squares = vec![];
+        squares.extend(self.get_knight_upper_jumps());
+        squares.extend(self.get_knight_lower_jumps());
+        squares.extend(self.get_knight_right_jumps());
+        squares.extend(self.get_knight_left_jumps());
         return squares;
     }
 }
