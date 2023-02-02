@@ -497,4 +497,60 @@ impl Square {
             return self == &Square { rank: 0, file: 4 };
         }
     }
+
+    pub fn is_kingside_castle_square(&self, color: Color) -> bool {
+        if color.is_white() {
+            self == &Square { rank: 7, file: 6 }
+        } else {
+            self == &Square { rank: 0, file: 6 }
+        }
+    }
+
+    pub fn is_queenside_castle_square(&self, color: Color) -> bool {
+        if color.is_white() {
+            self == &Square { rank: 7, file: 2 }
+        } else {
+            self == &Square { rank: 0, file: 2 }
+        }
+    }
+
+    pub fn get_kingside_castle_squares(color: Color) -> Vec<Square> {
+        if color.is_white() {
+            return vec![Square { rank: 7, file: 5 }, Square { rank: 7, file: 6 }];
+        } else {
+            return vec![Square { rank: 0, file: 5 }, Square { rank: 0, file: 6 }];
+        }
+    }
+
+    pub fn get_queenside_castle_squares(color: Color) -> Vec<Square> {
+        if color.is_white() {
+            return vec![
+                Square { rank: 7, file: 1 },
+                Square { rank: 7, file: 2 },
+                Square { rank: 7, file: 3 },
+            ];
+        } else {
+            return vec![
+                Square { rank: 0, file: 1 },
+                Square { rank: 0, file: 2 },
+                Square { rank: 0, file: 3 },
+            ];
+        }
+    }
+
+    pub fn get_queenside_castle_square(color: Color) -> Square {
+        if color.is_white() {
+            Square { rank: 7, file: 2 }
+        } else {
+            Square { rank: 0, file: 2 }
+        }
+    }
+
+    pub fn get_kingside_castle_square(color: Color) -> Square {
+        if color.is_white() {
+            Square { rank: 7, file: 6 }
+        } else {
+            Square { rank: 0, file: 6 }
+        }
+    }
 }

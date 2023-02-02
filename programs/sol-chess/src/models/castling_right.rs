@@ -32,6 +32,22 @@ impl CastlingRight {
         }
     }
 
+    pub fn has_kingside_right(&self, color: Color) -> bool {
+        if color.is_white() {
+            self.white_kingside
+        } else {
+            self.black_kingside
+        }
+    }
+
+    pub fn has_queenside_right(&self, color: Color) -> bool {
+        if color.is_white() {
+            self.white_queenside
+        } else {
+            self.black_queenside
+        }
+    }
+
     pub fn has_right(&self, color: Color) -> bool {
         if color.is_white() {
             self.white_kingside || self.white_queenside
@@ -40,7 +56,7 @@ impl CastlingRight {
         }
     }
 
-    pub fn lose_right(&mut self, color: Color, from: Square, to: Square) {
+    pub fn update_castling_right(&mut self, color: Color, from: Square, to: Square) {
         // king moved
         if from.is_king_square(color) {
             return self.lose_all_right(color);

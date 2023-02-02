@@ -198,6 +198,58 @@ impl Board {
         return pieces;
     }
 
+    pub fn is_square_attacked(&self, square: Square, color: Color) -> bool {
+        let pawn_attack_squares = square.get_pawn_attack_squares(color);
+        let adjacent_squares = square.get_adjacent_squares();
+        let diagonal_pieces = self.get_diagonal_pieces(square);
+        let parallel_pieces = self.get_parallel_pieces(square);
+        let knight_jump_pieces = self.get_knight_jump_pieces(square);
+
+        // pawn
+        for pawn_attack_square in pawn_attack_squares {
+            let piece = self.get_piece(pawn_attack_square);
+            if piece.is_pawn() && piece.get_color().is_opposite(color) {
+                return true;
+            }
+        }
+
+        // king
+        for adjacent_square in adjacent_squares {
+            let piece = self.get_piece(adjacent_square);
+            if piece.is_king() && piece.get_color().is_opposite(color) {
+                return true;
+            }
+        }
+
+        // bishop / queen
+        for diagonal_piece in diagonal_pieces {
+            if diagonal_piece.0.get_color().is_opposite(color)
+                && (diagonal_piece.0.is_bishop() || diagonal_piece.0.is_queen())
+            {
+                return true;
+            }
+        }
+
+        // rook / queen
+        for parallel_piece in parallel_pieces {
+            if parallel_piece.0.get_color().is_opposite(color)
+                && (parallel_piece.0.is_rook() || parallel_piece.0.is_queen())
+            {
+                return true;
+            }
+        }
+
+        // knight
+        for knight_jump_piece in knight_jump_pieces {
+            if knight_jump_piece.0.get_color().is_opposite(color) && knight_jump_piece.0.is_knight()
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     pub fn get_knight_jump_pieces(&self, square: Square) -> Vec<(Piece, Square)> {
         let mut pieces = vec![];
 
@@ -209,6 +261,46 @@ impl Board {
         }
 
         return pieces;
+    }
+
+    pub fn can_kingside_castle(&self, color: Color) -> bool {
+        let kingside_castle_squares = Square::get_kingside_castle_squares(color);
+        for kingside_castle_square in kingside_castle_squares {
+            if self.is_square_attacked(kingside_castle_square, color)
+                || self.get_piece(kingside_castle_square).is_not_empty()
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    pub fn can_queenside_castle(&self, color: Color) -> bool {
+        let queenside_castle_squares = Square::get_queenside_castle_squares(color);
+        for queenside_castle_square in queenside_castle_squares {
+            if self.is_square_attacked(queenside_castle_square, color)
+                || self.get_piece(queenside_castle_square).is_not_empty()
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    pub fn apply_kingside_castle_rook(&mut self, color: Color) {
+        if color.is_white() {
+            self.move_piece(Square { rank: 7, file: 7 }, Square { rank: 7, file: 5 })
+        } else {
+            self.move_piece(Square { rank: 0, file: 7 }, Square { rank: 0, file: 5 })
+        }
+    }
+
+    pub fn apply_queenside_castle_rook(&mut self, color: Color) {
+        if color.is_white() {
+            self.move_piece(Square { rank: 7, file: 0 }, Square { rank: 7, file: 3 })
+        } else {
+            self.move_piece(Square { rank: 0, file: 0 }, Square { rank: 0, file: 3 })
+        }
     }
 }
 

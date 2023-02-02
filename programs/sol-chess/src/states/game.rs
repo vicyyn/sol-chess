@@ -43,56 +43,7 @@ impl Game {
 
     pub fn in_check(&self, color: Color) -> bool {
         let king_square = self.board.get_king(color).unwrap();
-
-        let pawn_attack_squares = king_square.get_pawn_attack_squares(color);
-        let adjacent_squares = king_square.get_adjacent_squares();
-        let diagonal_pieces = self.board.get_diagonal_pieces(king_square);
-        let parallel_pieces = self.board.get_parallel_pieces(king_square);
-        let knight_jump_pieces = self.board.get_knight_jump_pieces(king_square);
-
-        // pawn
-        for pawn_attack_square in pawn_attack_squares {
-            let piece = self.board.get_piece(pawn_attack_square);
-            if piece.is_pawn() && piece.get_color().is_opposite(color) {
-                return true;
-            }
-        }
-
-        // king
-        for adjacent_square in adjacent_squares {
-            let piece = self.board.get_piece(adjacent_square);
-            if piece.is_king() && piece.get_color().is_opposite(color) {
-                return true;
-            }
-        }
-
-        // bishop / queen
-        for diagonal_piece in diagonal_pieces {
-            if diagonal_piece.0.get_color().is_opposite(color)
-                && (diagonal_piece.0.is_bishop() || diagonal_piece.0.is_queen())
-            {
-                return true;
-            }
-        }
-
-        // rook / queen
-        for parallel_piece in parallel_pieces {
-            if parallel_piece.0.get_color().is_opposite(color)
-                && (parallel_piece.0.is_rook() || parallel_piece.0.is_queen())
-            {
-                return true;
-            }
-        }
-
-        // knight
-        for knight_jump_piece in knight_jump_pieces {
-            if knight_jump_piece.0.get_color().is_opposite(color) && knight_jump_piece.0.is_knight()
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return self.board.is_square_attacked(king_square, color);
     }
 
     pub fn get_valid_pawn_moves(&self, color: Color, square: Square) -> Vec<Square> {
@@ -192,11 +143,22 @@ impl Game {
     pub fn get_valid_king_moves(&self, color: Color, square: Square) -> Vec<Square> {
         let mut valid_squares = vec![];
 
+        // regular move
         for adjacent_square in square.get_adjacent_squares() {
             let piece = self.board.get_piece(adjacent_square);
             if piece.is_empty() || piece.get_color().is_opposite(color) {
                 valid_squares.push(adjacent_square);
             }
+        }
+
+        // castling
+        if self.castling_right.has_kingside_right(color) && self.board.can_kingside_castle(color) {
+            valid_squares.push(Square::get_kingside_castle_square(color))
+        }
+
+        if self.castling_right.has_queenside_right(color) && self.board.can_queenside_castle(color)
+        {
+            valid_squares.push(Square::get_queenside_castle_square(color))
         }
 
         return valid_squares;
@@ -218,11 +180,21 @@ impl Game {
                     self.set_enpassant(from.get_square_forward(color));
                 }
             }
+            Piece::WhiteKing | Piece::BlackKing => {
+                if from.is_king_square(color) {
+                    // castle kingside
+                    if to.is_kingside_castle_square(color) {
+                        self.board.apply_kingside_castle_rook(color)
+                    } else if to.is_queenside_castle_square(color) {
+                        self.board.apply_queenside_castle_rook(color)
+                    }
+                }
+            }
             _ => {}
         };
 
         if self.castling_right.has_right(color) {
-            self.castling_right.lose_right(color, from, to);
+            self.castling_right.update_castling_right(color, from, to);
         }
         self.board.move_piece(from, to);
     }
