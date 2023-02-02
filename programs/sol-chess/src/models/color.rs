@@ -32,4 +32,11 @@ impl Color {
         }
         return 1;
     }
+
+    pub fn is_opposite_color_piece(&self, piece: Piece) -> bool {
+        if self.is_opposite(piece.get_color()) {
+            return true;
+        }
+        return false;
+    }
 }

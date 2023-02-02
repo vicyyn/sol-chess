@@ -473,4 +473,20 @@ impl Square {
 
         return Vec::from_iter(squares);
     }
+
+    pub fn get_pawn_attack_squares(&self, color: Color) -> Vec<Square> {
+        let mut squares = vec![];
+
+        if !self.is_leftmost_file_square_relative(color) {
+            let left_forward_square = self.get_square_forward_left(color);
+            squares.push(left_forward_square);
+        }
+
+        if !self.is_rightmost_file_square_relative(color) {
+            let right_forward_square = self.get_square_forward_right(color);
+            squares.push(right_forward_square);
+        }
+
+        return squares;
+    }
 }

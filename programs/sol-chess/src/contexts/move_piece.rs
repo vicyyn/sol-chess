@@ -20,15 +20,16 @@ impl<'info> MovePiece<'info> {
             CustomError::NotUsersTurn
         );
 
-        // require!(
-        //     game.is_valid_move(color, from, to),
-        //     CustomError::InvalidMove
-        // );
+        require!(
+            game.is_valid_move(color, from, to),
+            CustomError::InvalidMove
+        );
 
-        if game.is_valid_move(color, from, to) {
-            game.move_piece(color, from, to);
-            game.next_turn();
-        }
+        game.move_piece(color, from, to);
+
+        require!(game.not_in_check(color), CustomError::KingInCheck);
+
+        game.next_turn();
 
         Ok(())
     }

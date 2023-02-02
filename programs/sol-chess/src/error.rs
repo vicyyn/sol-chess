@@ -12,4 +12,6 @@ pub enum CustomError {
     NotUsersTurn,
     #[msg("Invalid Move")]
     InvalidMove,
+    #[msg("King in Check")]
+    KingInCheck,
 }

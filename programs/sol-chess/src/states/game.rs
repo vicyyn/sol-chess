@@ -36,6 +36,64 @@ impl Game {
         return false;
     }
 
+    pub fn not_in_check(&self, color: Color) -> bool {
+        return !self.in_check(color);
+    }
+
+    pub fn in_check(&self, color: Color) -> bool {
+        let king_square = self.board.get_king(color).unwrap();
+
+        let pawn_attack_squares = king_square.get_pawn_attack_squares(color);
+        let adjacent_squares = king_square.get_adjacent_squares();
+        let diagonal_pieces = self.board.get_diagonal_pieces(king_square);
+        let parallel_pieces = self.board.get_parallel_pieces(king_square);
+        let knight_jump_pieces = self.board.get_knight_jump_pieces(king_square);
+
+        // pawn
+        for pawn_attack_square in pawn_attack_squares {
+            let piece = self.board.get_piece(pawn_attack_square);
+            if piece.is_pawn() && piece.get_color().is_opposite(color) {
+                return true;
+            }
+        }
+
+        // king
+        for adjacent_square in adjacent_squares {
+            let piece = self.board.get_piece(adjacent_square);
+            if piece.is_king() && piece.get_color().is_opposite(color) {
+                return true;
+            }
+        }
+
+        // bishop / queen
+        for diagonal_piece in diagonal_pieces {
+            if diagonal_piece.0.get_color().is_opposite(color)
+                && (diagonal_piece.0.is_bishop() || diagonal_piece.0.is_queen())
+            {
+                return true;
+            }
+        }
+
+        // rook / queen
+        for parallel_piece in parallel_pieces {
+            if parallel_piece.0.get_color().is_opposite(color)
+                && (parallel_piece.0.is_rook() || parallel_piece.0.is_queen())
+            {
+                return true;
+            }
+        }
+
+        // knight
+        for knight_jump_piece in knight_jump_pieces {
+            if knight_jump_piece.0.get_color().is_opposite(color) && knight_jump_piece.0.is_knight()
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     pub fn get_valid_pawn_moves(&self, color: Color, square: Square) -> Vec<Square> {
         let mut valid_squares = vec![];
 
@@ -54,29 +112,14 @@ impl Game {
             }
         }
 
-        // pawn eats forward left (piece or enpassant)
-        if !square.is_leftmost_file_square_relative(color) {
-            let left_forward_square = square.get_square_forward_left(color);
-            let left_forward_piece = self.board.get_piece(left_forward_square);
-
-            if (left_forward_piece.is_not_empty()
-                && left_forward_piece.get_color().is_opposite(color))
-                || (self.enpassant.is_some() && left_forward_square == self.enpassant.unwrap())
+        // pawn eats
+        let pawn_attack_squares = square.get_pawn_attack_squares(color);
+        for pawn_attack_square in pawn_attack_squares {
+            let piece = self.board.get_piece(pawn_attack_square);
+            if (piece.is_not_empty() && piece.get_color().is_opposite(color))
+                || (self.enpassant.is_some() && pawn_attack_square == self.enpassant.unwrap())
             {
-                valid_squares.push(left_forward_square);
-            }
-        }
-
-        // pawn eats forward right (piece or enpassant)
-        if !square.is_rightmost_file_square_relative(color) {
-            let right_forward_square = square.get_square_forward_right(color);
-            let right_forward_piece = self.board.get_piece(right_forward_square);
-
-            if (right_forward_piece.is_not_empty()
-                && right_forward_piece.get_color().is_opposite(color))
-                || (self.enpassant.is_some() && right_forward_square == self.enpassant.unwrap())
-            {
-                valid_squares.push(right_forward_square);
+                valid_squares.push(pawn_attack_square);
             }
         }
 
@@ -93,24 +136,11 @@ impl Game {
         valid_squares.extend(self.board.get_left_squares_empty(square));
 
         // eat
-        let upper_piece = self.board.get_upper_piece(square);
-        if upper_piece.is_some() && upper_piece.unwrap().0.get_color().is_opposite(color) {
-            valid_squares.push(upper_piece.unwrap().1)
-        }
-
-        let lower_piece = self.board.get_lower_piece(square);
-        if lower_piece.is_some() && lower_piece.unwrap().0.get_color().is_opposite(color) {
-            valid_squares.push(lower_piece.unwrap().1)
-        }
-
-        let right_piece = self.board.get_right_piece(square);
-        if right_piece.is_some() && right_piece.unwrap().0.get_color().is_opposite(color) {
-            valid_squares.push(right_piece.unwrap().1)
-        }
-
-        let left_piece = self.board.get_left_piece(square);
-        if left_piece.is_some() && left_piece.unwrap().0.get_color().is_opposite(color) {
-            valid_squares.push(left_piece.unwrap().1)
+        let parallel_pieces = self.board.get_parallel_pieces(square);
+        for parallel_piece in parallel_pieces {
+            if parallel_piece.0.get_color().is_opposite(color) {
+                valid_squares.push(parallel_piece.1);
+            }
         }
 
         return valid_squares;
@@ -139,30 +169,11 @@ impl Game {
         valid_squares.extend(self.board.get_lower_left_squares_empty(square));
 
         // eat
-        let upper_right_piece = self.board.get_upper_right_piece(square);
-        if upper_right_piece.is_some()
-            && upper_right_piece.unwrap().0.get_color().is_opposite(color)
-        {
-            valid_squares.push(upper_right_piece.unwrap().1)
-        }
-
-        let upper_left_piece = self.board.get_upper_left_piece(square);
-        if upper_left_piece.is_some() && upper_left_piece.unwrap().0.get_color().is_opposite(color)
-        {
-            valid_squares.push(upper_left_piece.unwrap().1)
-        }
-
-        let lower_right_piece = self.board.get_lower_right_piece(square);
-        if lower_right_piece.is_some()
-            && lower_right_piece.unwrap().0.get_color().is_opposite(color)
-        {
-            valid_squares.push(lower_right_piece.unwrap().1)
-        }
-
-        let lower_left_piece = self.board.get_lower_left_piece(square);
-        if lower_left_piece.is_some() && lower_left_piece.unwrap().0.get_color().is_opposite(color)
-        {
-            valid_squares.push(lower_left_piece.unwrap().1)
+        let diagonal_pieces = self.board.get_diagonal_pieces(square);
+        for diagonal_piece in diagonal_pieces {
+            if diagonal_piece.0.get_color().is_opposite(color) {
+                valid_squares.push(diagonal_piece.1);
+            }
         }
 
         return valid_squares;

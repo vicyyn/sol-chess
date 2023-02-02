@@ -85,6 +85,48 @@ impl Piece {
         }
         return false;
     }
+
+    pub fn is_bishop(&self) -> bool {
+        if self == &Piece::BlackBishop || self == &Piece::WhiteBishop {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_rook(&self) -> bool {
+        if self == &Piece::BlackRook || self == &Piece::WhiteRook {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_queen(&self) -> bool {
+        if self == &Piece::WhiteQueen || self == &Piece::BlackQueen {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_knight(&self) -> bool {
+        if self == &Piece::WhiteKnight || self == &Piece::BlackKnight {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_pawn(&self) -> bool {
+        if self == &Piece::WhitePawn || self == &Piece::BlackPawn {
+            return true;
+        }
+        return false;
+    }
+
+    pub fn is_king(&self) -> bool {
+        if self == &Piece::WhiteKing || self == &Piece::BlackKing {
+            return true;
+        }
+        return false;
+    }
 }
 
 impl Default for Piece {
