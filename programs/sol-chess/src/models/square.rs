@@ -489,4 +489,12 @@ impl Square {
 
         return squares;
     }
+
+    pub fn is_king_square(&self, color: Color) -> bool {
+        if color.is_white() {
+            return self == &Square { rank: 7, file: 4 };
+        } else {
+            return self == &Square { rank: 0, file: 4 };
+        }
+    }
 }

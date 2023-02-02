@@ -5,10 +5,11 @@ pub const SEED_GAME: &[u8] = b"game";
 #[account]
 pub struct Game {
     pub board: Board,
-    pub state: GameState,
+    pub game_state: GameState,
     pub white: Option<Pubkey>,
     pub black: Option<Pubkey>,
     pub enpassant: Option<Square>,
+    pub castling_right: CastlingRight,
 }
 
 impl Game {
@@ -220,11 +221,14 @@ impl Game {
             _ => {}
         };
 
+        if self.castling_right.has_right(color) {
+            self.castling_right.lose_right(color, from, to);
+        }
         self.board.move_piece(from, to);
     }
 
     pub fn get_current_player_pubkey(&self) -> Pubkey {
-        if self.state.get_current_player_turn().is_white() {
+        if self.game_state.get_current_player_turn().is_white() {
             self.white.unwrap()
         } else {
             self.black.unwrap()
@@ -232,7 +236,7 @@ impl Game {
     }
 
     pub fn get_current_player_color(&self) -> Color {
-        if self.state.get_current_player_turn().is_white() {
+        if self.game_state.get_current_player_turn().is_white() {
             return Color::White;
         } else {
             return Color::Black;
@@ -260,11 +264,11 @@ impl Game {
     }
 
     pub fn start_game(&mut self) {
-        self.state = GameState::White;
+        self.game_state = GameState::White;
     }
 
     pub fn next_turn(&mut self) {
-        self.state = self.state.next_turn()
+        self.game_state = self.game_state.next_turn()
     }
 
     pub fn set_enpassant(&mut self, square: Square) {
@@ -283,10 +287,11 @@ pub trait GameAccount {
 impl GameAccount for Account<'_, Game> {
     fn new(&mut self) -> Result<()> {
         self.board = Board::default();
-        self.state = GameState::Waiting;
+        self.game_state = GameState::Waiting;
         self.white = None;
         self.black = None;
         self.enpassant = None;
+        self.castling_right = CastlingRight::default();
         Ok(())
     }
 }
