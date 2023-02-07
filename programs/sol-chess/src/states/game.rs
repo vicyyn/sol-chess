@@ -21,20 +21,46 @@ impl Game {
     }
 
     pub fn is_valid_move(&self, color: Color, from: Square, to: Square) -> bool {
-        let valid_moves = match self.board.get_piece(from) {
-            Piece::WhitePawn | Piece::BlackPawn => self.get_valid_pawn_moves(color, from),
-            Piece::WhiteRook | Piece::BlackRook => self.get_valid_rook_moves(color, from),
-            Piece::WhiteKnight | Piece::BlackKnight => self.get_valid_knight_moves(color, from),
-            Piece::WhiteBishop | Piece::BlackBishop => self.get_valid_bishop_moves(color, from),
-            Piece::WhiteQueen | Piece::BlackQueen => self.get_valid_queen_moves(color, from),
-            Piece::WhiteKing | Piece::BlackKing => self.get_valid_king_moves(color, from),
-            _ => vec![],
-        };
-
+        let valid_moves = self.get_piece_valid_moves(color, from);
         if valid_moves.contains(&to) {
             return true;
         }
         return false;
+    }
+
+    pub fn in_checkmate(&mut self, color: Color) -> bool {
+        if self.not_in_check(color) {
+            return false;
+        }
+
+        let pieces = self.board.get_color_pieces(color);
+        for piece in pieces {
+            let valid_moves = self.get_piece_valid_moves(color, piece.1);
+            for valid_move in valid_moves {
+                let eaten_piece = self.board.get_piece(valid_move);
+                self.board.move_piece(piece.1, valid_move);
+                if self.not_in_check(color) {
+                    self.board.undo_move(piece.1, valid_move, eaten_piece);
+                    return false;
+                }
+
+                self.board.undo_move(piece.1, valid_move, eaten_piece);
+            }
+        }
+
+        return true;
+    }
+
+    pub fn get_piece_valid_moves(&self, color: Color, square: Square) -> Vec<Square> {
+        return match self.board.get_piece(square) {
+            Piece::WhitePawn | Piece::BlackPawn => self.get_valid_pawn_moves(color, square),
+            Piece::WhiteRook | Piece::BlackRook => self.get_valid_rook_moves(color, square),
+            Piece::WhiteKnight | Piece::BlackKnight => self.get_valid_knight_moves(color, square),
+            Piece::WhiteBishop | Piece::BlackBishop => self.get_valid_bishop_moves(color, square),
+            Piece::WhiteQueen | Piece::BlackQueen => self.get_valid_queen_moves(color, square),
+            Piece::WhiteKing | Piece::BlackKing => self.get_valid_king_moves(color, square),
+            _ => vec![],
+        };
     }
 
     pub fn not_in_check(&self, color: Color) -> bool {
@@ -249,6 +275,14 @@ impl Game {
 
     pub fn reset_enpassant(&mut self) {
         self.enpassant = None;
+    }
+
+    pub fn set_winner(&mut self, color: Color) {
+        if color.is_white() {
+            self.game_state = GameState::WhiteWon;
+        } else {
+            self.game_state = GameState::BlackWon;
+        }
     }
 }
 

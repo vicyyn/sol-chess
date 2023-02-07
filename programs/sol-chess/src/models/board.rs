@@ -302,6 +302,25 @@ impl Board {
             self.move_piece(Square { rank: 0, file: 0 }, Square { rank: 0, file: 3 })
         }
     }
+
+    pub fn get_color_pieces(&self, color: Color) -> Vec<(Piece, Square)> {
+        let mut pieces = vec![];
+        for rank in 0..8 {
+            for file in 0..8 {
+                let square = Square { rank, file };
+                let piece = self.get_piece(square);
+                if piece.is_not_empty() && piece.get_color().is_color(color) {
+                    pieces.push((piece, square));
+                }
+            }
+        }
+        return pieces;
+    }
+
+    pub fn undo_move(&mut self, from: Square, to: Square, piece: Piece) {
+        self.move_piece(to, from);
+        self.set_piece(piece, to);
+    }
 }
 
 impl Default for Board {

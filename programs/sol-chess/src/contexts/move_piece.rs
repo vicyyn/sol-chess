@@ -31,6 +31,10 @@ impl<'info> MovePiece<'info> {
 
         game.next_turn();
 
+        if game.in_checkmate(color.get_opposite()) {
+            game.set_winner(color);
+        }
+
         Ok(())
     }
 }

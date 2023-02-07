@@ -26,6 +26,18 @@ impl Color {
         self != &color
     }
 
+    pub fn get_opposite(&self) -> Color {
+        if self.is_white() {
+            return Color::Black;
+        } else {
+            return Color::White;
+        }
+    }
+
+    pub fn is_color(&self, color: Color) -> bool {
+        self == &color
+    }
+
     pub fn get_starting_pawn_rank(&self) -> usize {
         if self.is_white() {
             return 6;
