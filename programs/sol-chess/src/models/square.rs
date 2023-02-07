@@ -538,7 +538,7 @@ impl Square {
         }
     }
 
-    pub fn get_queenside_castle_square(color: Color) -> Square {
+    pub fn get_queenside_castle_king_square(color: Color) -> Square {
         if color.is_white() {
             Square { rank: 7, file: 2 }
         } else {
@@ -546,11 +546,19 @@ impl Square {
         }
     }
 
-    pub fn get_kingside_castle_square(color: Color) -> Square {
+    pub fn get_kingside_castle_king_square(color: Color) -> Square {
         if color.is_white() {
             Square { rank: 7, file: 6 }
         } else {
             Square { rank: 0, file: 6 }
+        }
+    }
+
+    pub fn is_last_rank(&self, color: Color) -> bool {
+        if color.is_white() {
+            self.is_uppermost_rank_square()
+        } else {
+            self.is_lowermost_rank_square()
         }
     }
 }

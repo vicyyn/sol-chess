@@ -81,12 +81,14 @@ impl Game {
             // one step
             valid_squares.push(forward_square);
 
-            let double_forward_square = square.get_square_double_forward(color);
             // double step
-            if self.board.get_piece(double_forward_square).is_empty()
-                && square.is_starting_pawn_square(color)
-            {
-                valid_squares.push(double_forward_square);
+            if !square.is_starting_pawn_square(color.get_opposite()) {
+                let double_forward_square = square.get_square_double_forward(color);
+                if self.board.get_piece(double_forward_square).is_empty()
+                    && square.is_starting_pawn_square(color)
+                {
+                    valid_squares.push(double_forward_square);
+                }
             }
         }
 
@@ -179,12 +181,12 @@ impl Game {
 
         // castling
         if self.castling_right.has_kingside_right(color) && self.board.can_kingside_castle(color) {
-            valid_squares.push(Square::get_kingside_castle_square(color))
+            valid_squares.push(Square::get_kingside_castle_king_square(color))
         }
 
         if self.castling_right.has_queenside_right(color) && self.board.can_queenside_castle(color)
         {
-            valid_squares.push(Square::get_queenside_castle_square(color))
+            valid_squares.push(Square::get_queenside_castle_king_square(color))
         }
 
         return valid_squares;
@@ -204,6 +206,9 @@ impl Game {
                 // double step
                 else if to.is_double_forward(color, from) {
                     self.set_enpassant(from.get_square_forward(color));
+                // promotion
+                } else if to.is_last_rank(color) {
+                    self.board.set_piece(color.get_queen(), from)
                 }
             }
             Piece::WhiteKing | Piece::BlackKing => {
