@@ -33,7 +33,7 @@ impl<'info> Deposit<'info> {
             amount,
         )?;
 
-        user.deposit(amount);
+        user.increase_balance(amount);
         Ok(())
     }
 }

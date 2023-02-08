@@ -34,4 +34,16 @@ impl GameState {
             _ => panic!("Invalid Game State"),
         }
     }
+
+    pub fn is_still_going(&self) -> bool {
+        self == &Self::White || self == &Self::Black
+    }
+
+    pub fn is_waiting(&self) -> bool {
+        self == &Self::Waiting
+    }
+
+    pub fn is_finished(&self) -> bool {
+        self == &Self::WhiteWon || self == &Self::BlackWon || self == &Self::Draw
+    }
 }

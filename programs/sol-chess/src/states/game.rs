@@ -290,20 +290,53 @@ impl Game {
             self.game_state = GameState::BlackWon;
         }
     }
+
+    pub fn has_wager(&self) -> bool {
+        self.wager.is_some()
+    }
+
+    pub fn get_wager(&self) -> u64 {
+        self.wager.unwrap()
+    }
+
+    pub fn is_in_game(&self, player: Pubkey) -> bool {
+        self.white.eq(&Some(player)) || self.black.eq(&Some(player))
+    }
+
+    pub fn get_player_color(&self, player: Pubkey) -> Color {
+        if self.white.eq(&Some(player)) {
+            return Color::White;
+        } else {
+            return Color::Black;
+        }
+    }
+
+    pub fn leave_game(&mut self, color: Color) {
+        if color.is_white() {
+            self.white = None;
+        } else {
+            self.black = None;
+        }
+    }
+
+    pub fn has_not_started(&self) -> bool {
+        self.game_state.is_waiting()
+    }
 }
 
 pub trait GameAccount {
-    fn new(&mut self) -> Result<()>;
+    fn new(&mut self, wager: Option<u64>) -> Result<()>;
 }
 
 impl GameAccount for Account<'_, Game> {
-    fn new(&mut self) -> Result<()> {
+    fn new(&mut self, wager: Option<u64>) -> Result<()> {
         self.board = Board::default();
         self.game_state = GameState::Waiting;
         self.white = None;
         self.black = None;
         self.enpassant = None;
         self.castling_right = CastlingRight::default();
+        self.wager = wager;
         Ok(())
     }
 }

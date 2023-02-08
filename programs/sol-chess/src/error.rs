@@ -16,4 +16,8 @@ pub enum CustomError {
     KingInCheck,
     #[msg("Insufficient Balance")]
     InsufficientBalance,
+    #[msg("Not In Game")]
+    NotInGame,
+    #[msg("Game Already Started")]
+    GameAlreadyStarted,
 }

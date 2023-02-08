@@ -14,13 +14,11 @@ pub struct InitializeGame<'info> {
 }
 
 impl<'info> InitializeGame<'info> {
-    pub fn process(&mut self) -> Result<()> {
+    pub fn process(&mut self, wager: Option<u64>) -> Result<()> {
         let InitializeGame { game, user, .. } = self;
 
-        // require!(user.not_in_game(), CustomError::UserAlreadyInGame);
-
         user.increment_games();
-        game.new()?;
+        game.new(wager)?;
         Ok(())
     }
 }

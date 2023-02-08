@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use std::mem::size_of;
 
-declare_id!("3QG4u81iuHg8a7KhpsgJr2J4teJbUFs3ngtgBKG8zvA1");
+declare_id!("CCdU3zmYqPZaR2twy5hqcJmFV36tRpFC81seKUE8HVwX");
 
 pub mod contexts;
 pub mod error;
@@ -21,8 +21,8 @@ pub mod sol_chess {
         ctx.accounts.process()
     }
 
-    pub fn initialize_game(ctx: Context<InitializeGame>) -> Result<()> {
-        ctx.accounts.process()
+    pub fn initialize_game(ctx: Context<InitializeGame>, wager: Option<u64>) -> Result<()> {
+        ctx.accounts.process(wager)
     }
 
     pub fn join_game(ctx: Context<JoinGame>, color: Color) -> Result<()> {
@@ -40,5 +40,9 @@ pub mod sol_chess {
     pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
         let vault_bump = *ctx.bumps.get("vault").unwrap();
         ctx.accounts.process(vault_bump, amount)
+    }
+
+    pub fn leave_game(ctx: Context<LeaveGame>) -> Result<()> {
+        ctx.accounts.process()
     }
 }

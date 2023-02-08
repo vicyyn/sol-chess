@@ -33,6 +33,9 @@ impl<'info> MovePiece<'info> {
 
         if game.in_checkmate(color.get_opposite()) {
             game.set_winner(color);
+            if game.has_wager() {
+                user.increase_balance(game.get_wager() * 2)
+            }
         }
 
         Ok(())

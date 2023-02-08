@@ -15,7 +15,6 @@ impl<'info> JoinGame<'info> {
         let Self { user, game, .. } = self;
 
         require!(game.color_available(color), CustomError::ColorNotAvailable);
-        // require!(user.not_in_game(), CustomError::UserAlreadyInGame);
 
         user.set_game(game.key());
         game.join_game(user.key(), color);
@@ -23,6 +22,13 @@ impl<'info> JoinGame<'info> {
         if game.is_full() {
             game.start_game()
         }
+
+        if game.has_wager() {
+            let wager = game.get_wager();
+            require!(user.has_sufficient(wager), CustomError::InsufficientBalance);
+            user.decrease_balance(wager);
+        }
+
         Ok(())
     }
 }

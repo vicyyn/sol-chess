@@ -38,7 +38,7 @@ impl<'info> Withdraw<'info> {
             amount,
         )?;
 
-        user.withdraw(amount);
+        user.decrease_balance(amount);
 
         Ok(())
     }

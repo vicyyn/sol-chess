@@ -31,11 +31,11 @@ impl User {
         self.current_game.is_none()
     }
 
-    pub fn deposit(&mut self, amount: u64) {
+    pub fn increase_balance(&mut self, amount: u64) {
         self.balance += amount;
     }
 
-    pub fn withdraw(&mut self, amount: u64) {
+    pub fn decrease_balance(&mut self, amount: u64) {
         self.balance -= amount;
     }
 
@@ -57,6 +57,7 @@ impl UserAccount for Account<'_, User> {
         self.current_game = None;
         self.elo = 0;
         self.games = 0;
+        self.balance = 0;
         Ok(())
     }
 }

@@ -22,15 +22,15 @@ fn main() -> ClientResult<()> {
     let game = sol_chess::Game::pda(user.key(), 0).0;
 
     initialize_user(&client, user)?;
-    initialize_game(&client, user, game)?;
+    initialize_game(&client, user, game, Some(1000))?;
+
+    deposit(&client, user, 100000)?;
+
     join_game(&client, user, game, sol_chess::Color::White)?;
     join_game(&client, user, game, sol_chess::Color::Black)?;
     let from = sol_chess::Square { file: 0, rank: 6 };
     let to = sol_chess::Square { file: 0, rank: 5 };
     move_piece(&client, user, game, from, to)?;
-
-    deposit(&client, user, 1000)?;
-    withdraw(&client, user, 1000)?;
 
     Ok(())
 }
