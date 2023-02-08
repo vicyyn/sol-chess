@@ -32,4 +32,13 @@ pub mod sol_chess {
     pub fn move_piece(ctx: Context<MovePiece>, from: Square, to: Square) -> Result<()> {
         ctx.accounts.process(from, to)
     }
+
+    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
+        ctx.accounts.process(amount)
+    }
+
+    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
+        let vault_bump = *ctx.bumps.get("vault").unwrap();
+        ctx.accounts.process(vault_bump, amount)
+    }
 }

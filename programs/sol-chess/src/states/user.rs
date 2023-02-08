@@ -7,6 +7,7 @@ pub struct User {
     pub current_game: Option<Pubkey>,
     pub elo: u64,
     pub games: u64,
+    pub balance: u64,
 }
 
 impl User {
@@ -28,6 +29,22 @@ impl User {
 
     pub fn not_in_game(&self) -> bool {
         self.current_game.is_none()
+    }
+
+    pub fn deposit(&mut self, amount: u64) {
+        self.balance += amount;
+    }
+
+    pub fn withdraw(&mut self, amount: u64) {
+        self.balance -= amount;
+    }
+
+    pub fn has_sufficient(&self, amount: u64) -> bool {
+        if amount <= self.balance {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

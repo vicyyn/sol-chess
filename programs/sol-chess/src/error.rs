@@ -14,4 +14,6 @@ pub enum CustomError {
     InvalidMove,
     #[msg("King in Check")]
     KingInCheck,
+    #[msg("Insufficient Balance")]
+    InsufficientBalance,
 }

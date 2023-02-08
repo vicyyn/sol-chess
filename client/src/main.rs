@@ -29,5 +29,8 @@ fn main() -> ClientResult<()> {
     let to = sol_chess::Square { file: 0, rank: 5 };
     move_piece(&client, user, game, from, to)?;
 
+    deposit(&client, user, 1000)?;
+    withdraw(&client, user, 1000)?;
+
     Ok(())
 }

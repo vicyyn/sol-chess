@@ -10,6 +10,7 @@ pub struct Game {
     pub black: Option<Pubkey>,
     pub enpassant: Option<Square>,
     pub castling_right: CastlingRight,
+    pub wager: Option<u64>,
 }
 
 impl Game {
