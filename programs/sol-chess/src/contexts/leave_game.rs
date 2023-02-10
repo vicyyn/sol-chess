@@ -14,7 +14,7 @@ impl<'info> LeaveGame<'info> {
     pub fn process(&mut self) -> Result<()> {
         let Self { user, game, .. } = self;
 
-        require!(game.has_not_started(), CustomError::GameAlreadyStarted);
+        require!(game.is_not_started(), CustomError::GameAlreadyStarted);
         require!(game.is_in_game(user.key()), CustomError::NotInGame);
 
         let color = game.get_player_color(user.key());

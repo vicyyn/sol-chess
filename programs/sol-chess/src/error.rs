@@ -20,4 +20,6 @@ pub enum CustomError {
     NotInGame,
     #[msg("Game Already Started")]
     GameAlreadyStarted,
+    #[msg("Invalid Adversary User Account")]
+    InvalidAdversaryUserAccount,
 }

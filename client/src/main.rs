@@ -31,6 +31,7 @@ fn main() -> ClientResult<()> {
     let from = sol_chess::Square { file: 0, rank: 6 };
     let to = sol_chess::Square { file: 0, rank: 5 };
     move_piece(&client, user, game, from, to)?;
+    resign(&client, user, user, game)?;
 
     Ok(())
 }

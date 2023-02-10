@@ -45,4 +45,8 @@ pub mod sol_chess {
     pub fn leave_game(ctx: Context<LeaveGame>) -> Result<()> {
         ctx.accounts.process()
     }
+
+    pub fn resign(ctx: Context<Resign>) -> Result<()> {
+        ctx.accounts.process()
+    }
 }

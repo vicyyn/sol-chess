@@ -319,8 +319,20 @@ impl Game {
         }
     }
 
-    pub fn has_not_started(&self) -> bool {
+    pub fn is_not_started(&self) -> bool {
         self.game_state.is_waiting()
+    }
+
+    pub fn is_still_going(&self) -> bool {
+        self.game_state.is_still_going()
+    }
+
+    pub fn get_adversary_player(&self, color: Color) -> Pubkey {
+        if color.is_white() {
+            return self.black.unwrap();
+        } else {
+            return self.white.unwrap();
+        }
     }
 }
 
