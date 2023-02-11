@@ -11,6 +11,7 @@ pub struct Game {
     pub enpassant: Option<Square>,
     pub castling_right: CastlingRight,
     pub wager: Option<u64>,
+    pub draw_state: DrawState,
 }
 
 impl Game {
@@ -268,7 +269,7 @@ impl Game {
     }
 
     pub fn start_game(&mut self) {
-        self.game_state = GameState::White;
+        self.game_state.start_game();
     }
 
     pub fn next_turn(&mut self) {
@@ -285,9 +286,9 @@ impl Game {
 
     pub fn set_winner(&mut self, color: Color) {
         if color.is_white() {
-            self.game_state = GameState::WhiteWon;
+            self.game_state.set_white_winner()
         } else {
-            self.game_state = GameState::BlackWon;
+            self.game_state.set_black_winner()
         }
     }
 
@@ -301,6 +302,10 @@ impl Game {
 
     pub fn is_in_game(&self, player: Pubkey) -> bool {
         self.white.eq(&Some(player)) || self.black.eq(&Some(player))
+    }
+
+    pub fn is_not_in_game(&self, player: Pubkey) -> bool {
+        !self.white.eq(&Some(player)) && !self.black.eq(&Some(player))
     }
 
     pub fn get_player_color(&self, player: Pubkey) -> Color {
@@ -334,6 +339,26 @@ impl Game {
             return self.white.unwrap();
         }
     }
+
+    pub fn is_draw(&self) -> bool {
+        self.draw_state.is_draw()
+    }
+
+    pub fn update_draw_state(&mut self, color: Color) {
+        self.draw_state.update_state(color);
+    }
+
+    pub fn set_draw(&mut self) {
+        self.game_state.set_draw();
+    }
+
+    pub fn reset_draw_state(&mut self) {
+        self.draw_state.reset();
+    }
+
+    pub fn has_not_offered_draw(&self, color: Color) -> bool {
+        !self.draw_state.color_offered(color)
+    }
 }
 
 pub trait GameAccount {
@@ -349,6 +374,7 @@ impl GameAccount for Account<'_, Game> {
         self.enpassant = None;
         self.castling_right = CastlingRight::default();
         self.wager = wager;
+        self.draw_state = DrawState::Neither;
         Ok(())
     }
 }

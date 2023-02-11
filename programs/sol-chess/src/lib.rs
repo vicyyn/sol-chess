@@ -49,4 +49,8 @@ pub mod sol_chess {
     pub fn resign(ctx: Context<Resign>) -> Result<()> {
         ctx.accounts.process()
     }
+
+    pub fn offer_draw(ctx: Context<OfferDraw>) -> Result<()> {
+        ctx.accounts.process()
+    }
 }

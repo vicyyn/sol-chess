@@ -1,7 +1,7 @@
 use crate::*;
 
 #[derive(Accounts)]
-pub struct Resign<'info> {
+pub struct OfferDraw<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
@@ -13,7 +13,8 @@ pub struct Resign<'info> {
     #[account(mut)]
     pub game: Account<'info, Game>,
 }
-impl<'info> Resign<'info> {
+
+impl<'info> OfferDraw<'info> {
     pub fn process(&mut self) -> Result<()> {
         let Self {
             user,
@@ -30,10 +31,19 @@ impl<'info> Resign<'info> {
             game.get_adversary_player(color).eq(&adversary_user.key()),
             CustomError::InvalidAdversaryUserAccount
         );
+        require!(
+            game.has_not_offered_draw(color),
+            CustomError::AlreadyOfferedDraw
+        );
 
-        game.set_winner(color.get_opposite());
-        if game.has_wager() {
-            adversary_user.increase_balance(game.get_wager() * 2);
+        game.update_draw_state(color);
+        if game.is_draw() {
+            game.set_draw();
+
+            if game.has_wager() {
+                user.increase_balance(game.get_wager());
+                adversary_user.increase_balance(game.get_wager());
+            }
         }
 
         Ok(())

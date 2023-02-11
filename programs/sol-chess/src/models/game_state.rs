@@ -35,6 +35,18 @@ impl GameState {
         }
     }
 
+    pub fn set_white_winner(&mut self) {
+        *self = GameState::WhiteWon;
+    }
+
+    pub fn set_black_winner(&mut self) {
+        *self = GameState::BlackWon;
+    }
+
+    pub fn set_draw(&mut self) {
+        *self = GameState::Draw;
+    }
+
     pub fn is_still_going(&self) -> bool {
         self == &Self::White || self == &Self::Black
     }
@@ -45,5 +57,9 @@ impl GameState {
 
     pub fn is_finished(&self) -> bool {
         self == &Self::WhiteWon || self == &Self::BlackWon || self == &Self::Draw
+    }
+
+    pub fn start_game(&mut self) {
+        *self = GameState::White;
     }
 }

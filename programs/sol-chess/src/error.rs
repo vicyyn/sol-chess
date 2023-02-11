@@ -22,4 +22,8 @@ pub enum CustomError {
     GameAlreadyStarted,
     #[msg("Invalid Adversary User Account")]
     InvalidAdversaryUserAccount,
+    #[msg("User Already In Game")]
+    AlreadyInGame,
+    #[msg("Already Offered Draw")]
+    AlreadyOfferedDraw,
 }

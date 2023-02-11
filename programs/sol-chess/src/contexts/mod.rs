@@ -4,6 +4,7 @@ pub mod initialize_user;
 pub mod join_game;
 pub mod leave_game;
 pub mod move_piece;
+pub mod offer_draw;
 pub mod resign;
 pub mod withdraw;
 
@@ -13,5 +14,6 @@ pub use initialize_user::*;
 pub use join_game::*;
 pub use leave_game::*;
 pub use move_piece::*;
+pub use offer_draw::*;
 pub use resign::*;
 pub use withdraw::*;

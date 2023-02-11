@@ -38,6 +38,8 @@ impl<'info> MovePiece<'info> {
             }
         }
 
+        game.reset_draw_state();
+
         Ok(())
     }
 }
