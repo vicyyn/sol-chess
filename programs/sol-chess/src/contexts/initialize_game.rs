@@ -11,14 +11,17 @@ pub struct InitializeGame<'info> {
     pub game: Account<'info, Game>,
 
     pub system_program: Program<'info, System>,
+    pub clock: Sysvar<'info, Clock>,
 }
 
 impl<'info> InitializeGame<'info> {
     pub fn process(&mut self, wager: Option<u64>) -> Result<()> {
-        let InitializeGame { game, user, .. } = self;
+        let InitializeGame {
+            game, user, clock, ..
+        } = self;
 
         user.increment_games();
-        game.new(wager)?;
+        game.new(wager, clock.unix_timestamp)?;
         Ok(())
     }
 }

@@ -12,6 +12,7 @@ pub struct Game {
     pub castling_right: CastlingRight,
     pub wager: Option<u64>,
     pub draw_state: DrawState,
+    pub created_at: i64,
 }
 
 impl Game {
@@ -362,11 +363,11 @@ impl Game {
 }
 
 pub trait GameAccount {
-    fn new(&mut self, wager: Option<u64>) -> Result<()>;
+    fn new(&mut self, wager: Option<u64>, created_at: i64) -> Result<()>;
 }
 
 impl GameAccount for Account<'_, Game> {
-    fn new(&mut self, wager: Option<u64>) -> Result<()> {
+    fn new(&mut self, wager: Option<u64>, created_at: i64) -> Result<()> {
         self.board = Board::default();
         self.game_state = GameState::Waiting;
         self.white = None;
@@ -375,6 +376,7 @@ impl GameAccount for Account<'_, Game> {
         self.castling_right = CastlingRight::default();
         self.wager = wager;
         self.draw_state = DrawState::Neither;
+        self.created_at = created_at;
         Ok(())
     }
 }
