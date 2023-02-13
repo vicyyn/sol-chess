@@ -55,16 +55,20 @@ impl User {
         1.0 / (1.0 + 10f64.powf((adversary_elo - self.elo) as f64 / 400.0))
     }
 
-    pub fn won_against(&mut self, adversary_elo: u32) {
-        self.elo = self.elo + 40 * (1.0 - self.get_expected_score(adversary_elo)) as u32;
+    pub fn get_new_elo(&self, adversary_elo: u32, score: f64) -> u32 {
+        self.elo + (40.0 * (score - self.get_expected_score(adversary_elo))) as u32
     }
 
-    pub fn lost_against(&mut self, adversary_elo: u32) {
-        self.elo = self.elo + 40 * (0.0 - self.get_expected_score(adversary_elo)) as u32;
+    pub fn won_against(&mut self, adversary_elo: u32) {
+        self.elo = self.get_new_elo(adversary_elo, 1.0);
     }
 
     pub fn draw_against(&mut self, adversary_elo: u32) {
-        self.elo = self.elo + 40 * (0.5 - self.get_expected_score(adversary_elo)) as u32;
+        self.elo = self.get_new_elo(adversary_elo, 0.5);
+    }
+
+    pub fn lost_against(&mut self, adversary_elo: u32) {
+        self.elo = self.get_new_elo(adversary_elo, 0.0);
     }
 }
 

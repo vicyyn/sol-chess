@@ -15,7 +15,7 @@ impl<'info> JoinGame<'info> {
         let Self { user, game, .. } = self;
 
         require!(game.color_available(color), CustomError::ColorNotAvailable);
-        require!(game.is_not_in_game(user.key()), CustomError::AlreadyInGame);
+        // require!(game.is_not_in_game(user.key()), CustomError::AlreadyInGame);
 
         user.set_game(game.key());
         game.join_game(user.key(), color);

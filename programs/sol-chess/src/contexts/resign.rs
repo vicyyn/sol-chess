@@ -32,10 +32,6 @@ impl<'info> Resign<'info> {
         );
 
         game.set_winner(color.get_opposite());
-
-        user.lost_against(adversary_user.get_elo());
-        adversary_user.won_against(user.get_elo());
-
         if game.has_wager() {
             adversary_user.increase_balance(game.get_wager() * 2);
         }
