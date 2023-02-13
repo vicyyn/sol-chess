@@ -13,6 +13,7 @@ pub struct Game {
     pub wager: Option<u64>,
     pub draw_state: DrawState,
     pub created_at: i64,
+    pub is_rated: bool,
 }
 
 impl Game {
@@ -360,14 +361,18 @@ impl Game {
     pub fn has_not_offered_draw(&self, color: Color) -> bool {
         !self.draw_state.color_offered(color)
     }
+
+    pub fn is_rated(&self) -> bool {
+        self.is_rated
+    }
 }
 
 pub trait GameAccount {
-    fn new(&mut self, wager: Option<u64>, created_at: i64) -> Result<()>;
+    fn new(&mut self, wager: Option<u64>, created_at: i64, is_rated: bool) -> Result<()>;
 }
 
 impl GameAccount for Account<'_, Game> {
-    fn new(&mut self, wager: Option<u64>, created_at: i64) -> Result<()> {
+    fn new(&mut self, wager: Option<u64>, created_at: i64, is_rated: bool) -> Result<()> {
         self.board = Board::default();
         self.game_state = GameState::Waiting;
         self.white = None;
@@ -377,6 +382,7 @@ impl GameAccount for Account<'_, Game> {
         self.wager = wager;
         self.draw_state = DrawState::Neither;
         self.created_at = created_at;
+        self.is_rated = is_rated;
         Ok(())
     }
 }

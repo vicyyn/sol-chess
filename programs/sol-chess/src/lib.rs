@@ -21,8 +21,12 @@ pub mod sol_chess {
         ctx.accounts.process()
     }
 
-    pub fn initialize_game(ctx: Context<InitializeGame>, wager: Option<u64>) -> Result<()> {
-        ctx.accounts.process(wager)
+    pub fn initialize_game(
+        ctx: Context<InitializeGame>,
+        wager: Option<u64>,
+        is_rated: bool,
+    ) -> Result<()> {
+        ctx.accounts.process(wager, is_rated)
     }
 
     pub fn join_game(ctx: Context<JoinGame>, color: Color) -> Result<()> {

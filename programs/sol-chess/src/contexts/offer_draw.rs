@@ -44,6 +44,9 @@ impl<'info> OfferDraw<'info> {
                 user.increase_balance(game.get_wager());
                 adversary_user.increase_balance(game.get_wager());
             }
+
+            user.draw_against(adversary_user.get_elo());
+            adversary_user.draw_against(user.get_elo());
         }
 
         Ok(())

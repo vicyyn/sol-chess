@@ -8,11 +8,19 @@ pub struct MovePiece<'info> {
     #[account(mut,address=User::pda(payer.key()).0)]
     pub user: Account<'info, User>,
     #[account(mut)]
+    pub adversary_user: Account<'info, User>,
+
+    #[account(mut)]
     pub game: Account<'info, Game>,
 }
 impl<'info> MovePiece<'info> {
     pub fn process(&mut self, from: Square, to: Square) -> Result<()> {
-        let Self { user, game, .. } = self;
+        let Self {
+            user,
+            game,
+            adversary_user,
+            ..
+        } = self;
         let color = game.get_current_player_color();
 
         require!(
@@ -36,6 +44,9 @@ impl<'info> MovePiece<'info> {
             if game.has_wager() {
                 user.increase_balance(game.get_wager() * 2)
             }
+
+            user.won_against(adversary_user.get_elo());
+            adversary_user.lost_against(user.get_elo());
         }
 
         game.reset_draw_state();

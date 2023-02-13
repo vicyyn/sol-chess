@@ -10,7 +10,7 @@ sol_chess = "CCdU3zmYqPZaR2twy5hqcJmFV36tRpFC81seKUE8HVwX"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

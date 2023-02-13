@@ -5,7 +5,7 @@ pub const SEED_USER: &[u8] = b"user";
 #[account]
 pub struct User {
     pub current_game: Option<Pubkey>,
-    pub elo: u64,
+    pub elo: u32,
     pub games: u64,
     pub balance: u64,
 }
@@ -46,6 +46,26 @@ impl User {
             return false;
         }
     }
+
+    pub fn get_elo(&self) -> u32 {
+        self.elo
+    }
+
+    pub fn get_expected_score(&self, adversary_elo: u32) -> f64 {
+        1.0 / (1.0 + 10f64.powf((adversary_elo - self.elo) as f64 / 400.0))
+    }
+
+    pub fn won_against(&mut self, adversary_elo: u32) {
+        self.elo = self.elo + 40 * (1.0 - self.get_expected_score(adversary_elo)) as u32;
+    }
+
+    pub fn lost_against(&mut self, adversary_elo: u32) {
+        self.elo = self.elo + 40 * (0.0 - self.get_expected_score(adversary_elo)) as u32;
+    }
+
+    pub fn draw_against(&mut self, adversary_elo: u32) {
+        self.elo = self.elo + 40 * (0.5 - self.get_expected_score(adversary_elo)) as u32;
+    }
 }
 
 pub trait UserAccount {
@@ -55,7 +75,7 @@ pub trait UserAccount {
 impl UserAccount for Account<'_, User> {
     fn new(&mut self) -> Result<()> {
         self.current_game = None;
-        self.elo = 0;
+        self.elo = 800;
         self.games = 0;
         self.balance = 0;
         Ok(())
