@@ -52,7 +52,7 @@ impl User {
     }
 
     pub fn get_expected_score(&self, adversary_elo: u32) -> f64 {
-        1.0 / (1.0 + 10f64.powf((adversary_elo - self.elo) as f64 / 400.0))
+        1.0 / (1.0 + 10f64.powf((adversary_elo as f64 - self.elo as f64) / 400.0))
     }
 
     pub fn get_new_elo(&self, adversary_elo: u32, score: f64) -> u32 {
