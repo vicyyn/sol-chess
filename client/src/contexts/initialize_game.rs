@@ -5,6 +5,9 @@ pub fn initialize_game(
     user: Pubkey,
     game: Pubkey,
     wager: Option<u64>,
+    timer: Option<u32>,
+    increment: Option<u32>,
+    is_rated: bool,
 ) -> ClientResult<()> {
     let initiallize_game_ix = Instruction {
         program_id: sol_chess::ID,
@@ -13,8 +16,17 @@ pub fn initialize_game(
             AccountMeta::new(user, false),
             AccountMeta::new(game, false),
             AccountMeta::new_readonly(system_program::ID, false),
+            AccountMeta::new_readonly(clock::ID, false),
         ],
-        data: sol_chess::instruction::InitializeGame { wager }.data(),
+        data: sol_chess::instruction::InitializeGame {
+            game_config: sol_chess::GameConfig {
+                wager,
+                timer,
+                increment,
+                is_rated,
+            },
+        }
+        .data(),
     };
 
     send_and_confirm_tx(

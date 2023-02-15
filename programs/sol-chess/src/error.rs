@@ -26,4 +26,6 @@ pub enum CustomError {
     AlreadyInGame,
     #[msg("Already Offered Draw")]
     AlreadyOfferedDraw,
+    #[msg("TimeHasRunOut")]
+    TimeHasRunOut,
 }

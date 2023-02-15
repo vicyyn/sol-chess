@@ -10,10 +10,10 @@ pub struct Game {
     pub black: Option<Pubkey>,
     pub enpassant: Option<Square>,
     pub castling_right: CastlingRight,
-    pub wager: Option<u64>,
     pub draw_state: DrawState,
     pub created_at: i64,
-    pub is_rated: bool,
+    pub game_config: GameConfig,
+    pub time_control: Option<TimeControl>,
 }
 
 impl Game {
@@ -295,11 +295,11 @@ impl Game {
     }
 
     pub fn has_wager(&self) -> bool {
-        self.wager.is_some()
+        self.game_config.has_wager()
     }
 
     pub fn get_wager(&self) -> u64 {
-        self.wager.unwrap()
+        self.game_config.get_wager()
     }
 
     pub fn is_in_game(&self, player: Pubkey) -> bool {
@@ -363,26 +363,42 @@ impl Game {
     }
 
     pub fn is_rated(&self) -> bool {
-        self.is_rated
+        self.game_config.is_rated()
+    }
+
+    pub fn has_time_control(&self) -> bool {
+        self.time_control.is_some()
+    }
+
+    pub fn has_time(&self, color: Color, current_timestamp: i64) -> bool {
+        self.time_control
+            .unwrap()
+            .has_time(color, current_timestamp)
+    }
+
+    pub fn update_time_control(&mut self, color: Color, current_timestamp: i64) {
+        if let Some(ref mut time_control) = self.time_control {
+            time_control.update_time_control(color, current_timestamp)
+        };
     }
 }
 
 pub trait GameAccount {
-    fn new(&mut self, wager: Option<u64>, created_at: i64, is_rated: bool) -> Result<()>;
+    fn new(&mut self, game_config: GameConfig, created_at: i64) -> Result<()>;
 }
 
 impl GameAccount for Account<'_, Game> {
-    fn new(&mut self, wager: Option<u64>, created_at: i64, is_rated: bool) -> Result<()> {
+    fn new(&mut self, game_config: GameConfig, created_at: i64) -> Result<()> {
         self.board = Board::default();
         self.game_state = GameState::Waiting;
         self.white = None;
         self.black = None;
         self.enpassant = None;
         self.castling_right = CastlingRight::default();
-        self.wager = wager;
         self.draw_state = DrawState::Neither;
         self.created_at = created_at;
-        self.is_rated = is_rated;
+        self.game_config = game_config;
+        self.time_control = game_config.get_time_control();
         Ok(())
     }
 }

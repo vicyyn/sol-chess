@@ -12,7 +12,9 @@ pub fn move_piece(
         accounts: vec![
             AccountMeta::new(client.payer_pubkey(), true),
             AccountMeta::new(user, false),
+            AccountMeta::new(user, false),
             AccountMeta::new(game, false),
+            AccountMeta::new_readonly(clock::ID, false),
         ],
         data: sol_chess::instruction::MovePiece { from, to }.data(),
     };

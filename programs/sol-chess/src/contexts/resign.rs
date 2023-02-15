@@ -31,12 +31,14 @@ impl<'info> Resign<'info> {
             CustomError::InvalidAdversaryUserAccount
         );
 
-        user.lost_against(adversary_user.get_elo());
-        adversary_user.won_against(user.get_elo());
-
         game.set_winner(color.get_opposite());
         if game.has_wager() {
             adversary_user.increase_balance(game.get_wager() * 2);
+        }
+
+        if game.is_rated() {
+            user.lost_against(adversary_user.get_elo());
+            adversary_user.won_against(user.get_elo());
         }
 
         Ok(())

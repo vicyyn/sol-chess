@@ -15,13 +15,13 @@ pub struct InitializeGame<'info> {
 }
 
 impl<'info> InitializeGame<'info> {
-    pub fn process(&mut self, wager: Option<u64>, is_rated: bool) -> Result<()> {
+    pub fn process(&mut self, game_config: GameConfig) -> Result<()> {
         let InitializeGame {
             game, user, clock, ..
         } = self;
 
         user.increment_games();
-        game.new(wager, clock.unix_timestamp, is_rated)?;
+        game.new(game_config, clock.unix_timestamp)?;
         Ok(())
     }
 }

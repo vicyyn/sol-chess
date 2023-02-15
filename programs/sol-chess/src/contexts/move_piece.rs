@@ -12,6 +12,7 @@ pub struct MovePiece<'info> {
 
     #[account(mut)]
     pub game: Account<'info, Game>,
+    pub clock: Sysvar<'info, Clock>,
 }
 impl<'info> MovePiece<'info> {
     pub fn process(&mut self, from: Square, to: Square) -> Result<()> {
@@ -19,9 +20,18 @@ impl<'info> MovePiece<'info> {
             user,
             game,
             adversary_user,
+            clock,
             ..
         } = self;
         let color = game.get_current_player_color();
+
+        if game.has_time_control() {
+            require!(
+                game.has_time(color, clock.unix_timestamp),
+                CustomError::TimeHasRunOut
+            );
+            game.update_time_control(color, clock.unix_timestamp);
+        }
 
         require!(
             user.key() == game.get_current_player_pubkey(),
@@ -39,17 +49,19 @@ impl<'info> MovePiece<'info> {
 
         game.next_turn();
 
+        game.reset_draw_state();
+
         if game.in_checkmate(color.get_opposite()) {
             game.set_winner(color);
             if game.has_wager() {
                 user.increase_balance(game.get_wager() * 2)
             }
 
-            user.won_against(adversary_user.get_elo());
-            adversary_user.lost_against(user.get_elo());
+            if game.is_rated() {
+                user.won_against(adversary_user.get_elo());
+                adversary_user.lost_against(user.get_elo());
+            }
         }
-
-        game.reset_draw_state();
 
         Ok(())
     }
