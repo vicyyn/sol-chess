@@ -2,15 +2,15 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-sol_chess = "CCdU3zmYqPZaR2twy5hqcJmFV36tRpFC81seKUE8HVwX"
+sol_chess = "9PsU5ntn26Bos8FRtwupQbvoYbchzt8bdQoxLym7AHWB"
 [programs.devnet]
-sol_chess = "CCdU3zmYqPZaR2twy5hqcJmFV36tRpFC81seKUE8HVwX"
+sol_chess = "9PsU5ntn26Bos8FRtwupQbvoYbchzt8bdQoxLym7AHWB"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

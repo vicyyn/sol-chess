@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_lang::solana_program::instruction::Instruction;
 use std::mem::size_of;
 
-declare_id!("CCdU3zmYqPZaR2twy5hqcJmFV36tRpFC81seKUE8HVwX");
+declare_id!("9PsU5ntn26Bos8FRtwupQbvoYbchzt8bdQoxLym7AHWB");
 
 pub mod contexts;
 pub mod error;

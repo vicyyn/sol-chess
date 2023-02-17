@@ -1,26 +1,24 @@
 use crate::*;
-use clockwork_sdk::{
-    state::{AccountMetaData, InstructionData, Thread, ThreadResponse},
-    utils::PAYER_PUBKEY,
-};
+use clockwork_sdk::state::Thread;
 
 #[derive(Accounts)]
 pub struct ClockworkCheckTimer<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
 
-    #[account(mut,address=User::pda(payer.key()).0)]
+    #[account(mut)]
     pub user: Account<'info, User>,
     #[account(mut)]
     pub adversary_user: Account<'info, User>,
 
     #[account(mut,signer,address = Thread::pubkey(game.key(),"game_thread".to_string()))]
-    pub clockwork_thread: Box<Account<'info, Thread>>,
+    pub game_thread: Box<Account<'info, Thread>>,
 
     #[account(mut,address=Game::pda(game.owner,game.id).0)]
     pub game: Account<'info, Game>,
     pub clock: Sysvar<'info, Clock>,
 }
+
 impl<'info> ClockworkCheckTimer<'info> {
     pub fn process(&mut self) -> Result<()> {
         let Self {
@@ -33,14 +31,10 @@ impl<'info> ClockworkCheckTimer<'info> {
 
         let color = game.get_current_player_color();
 
+        require!(game.is_in_game(user.key()), CustomError::NotInGame);
         require!(
-            game.get_adversary_player(color).eq(&adversary_user.key()),
-            CustomError::InvalidAdversaryUserAccount
-        );
-
-        require!(
-            user.key() == game.get_current_player_pubkey(),
-            CustomError::NotUsersTurn
+            game.is_in_game(game.get_adversary_player(color)),
+            CustomError::NotInGame
         );
 
         if game.has_no_time(color, clock.unix_timestamp) {

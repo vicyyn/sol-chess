@@ -12,6 +12,7 @@ pub struct Withdraw<'info> {
     pub vault: SystemAccount<'info>,
     pub system_program: Program<'info, System>,
 }
+
 impl<'info> Withdraw<'info> {
     pub fn process(&mut self, vault_bump: u8, amount: u64) -> Result<()> {
         let Self {

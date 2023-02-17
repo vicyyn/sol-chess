@@ -1,6 +1,6 @@
 use {
     anchor_lang::{prelude::*, InstructionData},
-    clockwork_client::{Client, ClientResult},
+    clockwork_client::{thread, Client, ClientResult},
     solana_sdk::{
         instruction::Instruction, native_token::LAMPORTS_PER_SOL, signature::Keypair,
         system_program, sysvar::clock,
@@ -15,7 +15,7 @@ pub use utils::*;
 
 fn main() -> ClientResult<()> {
     let payer = Keypair::new();
-    let client = Client::new(payer, "http://localhost:8899".into());
+    let client = Client::new(payer, "https://api.devnet.solana.com".into());
     client.airdrop(&client.payer_pubkey(), 1 * LAMPORTS_PER_SOL)?;
 
     let user = sol_chess::User::pda(client.payer_pubkey()).0;

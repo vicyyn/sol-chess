@@ -74,8 +74,10 @@ impl TimeControl {
             let time_spent = (current_timestamp - self.last_move) as u32;
             if color.is_white() {
                 self.decrease_white_timer(time_spent);
+                self.increment_white()
             } else {
                 self.decrease_black_timer(time_spent);
+                self.increment_black()
             }
         }
         self.set_last_move(current_timestamp)

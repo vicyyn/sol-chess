@@ -13,6 +13,7 @@ pub struct Resign<'info> {
     #[account(mut,address=Game::pda(game.owner,game.id).0)]
     pub game: Account<'info, Game>,
 }
+
 impl<'info> Resign<'info> {
     pub fn process(&mut self) -> Result<()> {
         let Self {

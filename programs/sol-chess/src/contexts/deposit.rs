@@ -12,6 +12,7 @@ pub struct Deposit<'info> {
     pub vault: SystemAccount<'info>,
     pub system_program: Program<'info, System>,
 }
+
 impl<'info> Deposit<'info> {
     pub fn process(&mut self, amount: u64) -> Result<()> {
         let Self {
