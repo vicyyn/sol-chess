@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_lang::solana_program::instruction::Instruction;
 use std::mem::size_of;
 
 declare_id!("CCdU3zmYqPZaR2twy5hqcJmFV36tRpFC81seKUE8HVwX");
@@ -22,7 +23,8 @@ pub mod sol_chess {
     }
 
     pub fn initialize_game(ctx: Context<InitializeGame>, game_config: GameConfig) -> Result<()> {
-        ctx.accounts.process(game_config)
+        let game_bump = *ctx.bumps.get("game").unwrap();
+        ctx.accounts.process(game_config, game_bump)
     }
 
     pub fn join_game(ctx: Context<JoinGame>, color: Color) -> Result<()> {

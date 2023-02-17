@@ -17,3 +17,4 @@ default = []
 
 [dependencies]
 anchor-lang = "0.26.0"
+clockwork-sdk = "1.4.2"

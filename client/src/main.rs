@@ -22,7 +22,7 @@ fn main() -> ClientResult<()> {
     let game = sol_chess::Game::pda(user.key(), 0).0;
 
     initialize_user(&client, user)?;
-    initialize_game(&client, user, game, Some(1000), None, None, true)?;
+    initialize_game(&client, user, game, Some(1000), 60, 5, true)?;
 
     deposit(&client, user, 100000)?;
 

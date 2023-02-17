@@ -15,13 +15,19 @@ pub struct InitializeGame<'info> {
 }
 
 impl<'info> InitializeGame<'info> {
-    pub fn process(&mut self, game_config: GameConfig) -> Result<()> {
+    pub fn process(&mut self, game_config: GameConfig, game_bump: u8) -> Result<()> {
         let InitializeGame {
             game, user, clock, ..
         } = self;
 
+        game.new(
+            game_config,
+            clock.unix_timestamp,
+            user.key(),
+            user.games,
+            game_bump,
+        )?;
         user.increment_games();
-        game.new(game_config, clock.unix_timestamp)?;
         Ok(())
     }
 }

@@ -4,6 +4,11 @@ pub const SEED_GAME: &[u8] = b"game";
 
 #[account]
 pub struct Game {
+    pub created_at: i64,
+    pub owner: Pubkey,
+    pub id: u64,
+    pub bump: u8,
+
     pub board: Board,
     pub game_state: GameState,
     pub white: Option<Pubkey>,
@@ -11,9 +16,8 @@ pub struct Game {
     pub enpassant: Option<Square>,
     pub castling_right: CastlingRight,
     pub draw_state: DrawState,
-    pub created_at: i64,
     pub game_config: GameConfig,
-    pub time_control: Option<TimeControl>,
+    pub time_control: TimeControl,
 }
 
 impl Game {
@@ -366,29 +370,49 @@ impl Game {
         self.game_config.is_rated()
     }
 
-    pub fn has_time_control(&self) -> bool {
-        self.time_control.is_some()
+    pub fn is_first_move(&self) -> bool {
+        self.time_control.is_first_move()
     }
 
     pub fn has_time(&self, color: Color, current_timestamp: i64) -> bool {
-        self.time_control
-            .unwrap()
-            .has_time(color, current_timestamp)
+        self.time_control.has_time(color, current_timestamp)
+    }
+
+    pub fn has_no_time(&self, color: Color, current_timestamp: i64) -> bool {
+        !self.has_time(color, current_timestamp)
     }
 
     pub fn update_time_control(&mut self, color: Color, current_timestamp: i64) {
-        if let Some(ref mut time_control) = self.time_control {
-            time_control.update_time_control(color, current_timestamp)
-        };
+        self.time_control
+            .update_time_control(color, current_timestamp)
     }
 }
 
 pub trait GameAccount {
-    fn new(&mut self, game_config: GameConfig, created_at: i64) -> Result<()>;
+    fn new(
+        &mut self,
+        game_config: GameConfig,
+        created_at: i64,
+        owner: Pubkey,
+        id: u64,
+        bump: u8,
+    ) -> Result<()>;
 }
 
 impl GameAccount for Account<'_, Game> {
-    fn new(&mut self, game_config: GameConfig, created_at: i64) -> Result<()> {
+    fn new(
+        &mut self,
+        game_config: GameConfig,
+        created_at: i64,
+        owner: Pubkey,
+        id: u64,
+        bump: u8,
+    ) -> Result<()> {
+        self.created_at = created_at;
+        self.owner = owner;
+        self.id = id;
+        self.bump = bump;
+
         self.board = Board::default();
         self.game_state = GameState::Waiting;
         self.white = None;
@@ -396,7 +420,6 @@ impl GameAccount for Account<'_, Game> {
         self.enpassant = None;
         self.castling_right = CastlingRight::default();
         self.draw_state = DrawState::Neither;
-        self.created_at = created_at;
         self.game_config = game_config;
         self.time_control = game_config.get_time_control();
         Ok(())

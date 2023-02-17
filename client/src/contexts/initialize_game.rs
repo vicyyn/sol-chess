@@ -5,8 +5,8 @@ pub fn initialize_game(
     user: Pubkey,
     game: Pubkey,
     wager: Option<u64>,
-    timer: Option<u32>,
-    increment: Option<u32>,
+    timer: u32,
+    increment: u32,
     is_rated: bool,
 ) -> ClientResult<()> {
     let initiallize_game_ix = Instruction {

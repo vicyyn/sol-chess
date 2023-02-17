@@ -2,19 +2,19 @@ use crate::*;
 
 #[derive(Clone, Copy, Debug, AnchorSerialize, AnchorDeserialize)]
 pub struct GameConfig {
-    pub timer: Option<u32>,
-    pub increment: Option<u32>,
+    pub timer: u32,
+    pub increment: u32,
     pub is_rated: bool,
     pub wager: Option<u64>,
 }
 
 impl GameConfig {
     pub fn get_timer(&self) -> u32 {
-        self.timer.unwrap()
+        self.timer
     }
 
     pub fn get_increment(&self) -> u32 {
-        self.increment.unwrap()
+        self.increment
     }
 
     pub fn get_wager(&self) -> u64 {
@@ -29,15 +29,7 @@ impl GameConfig {
         self.is_rated
     }
 
-    pub fn valid_time_control(&self) -> bool {
-        self.timer.is_some() && self.increment.is_some()
-    }
-
-    pub fn get_time_control(&self) -> Option<TimeControl> {
-        if self.valid_time_control() {
-            Some(TimeControl::new(self.get_timer(), self.get_increment()))
-        } else {
-            None
-        }
+    pub fn get_time_control(&self) -> TimeControl {
+        TimeControl::new(self.get_timer(), self.get_increment())
     }
 }

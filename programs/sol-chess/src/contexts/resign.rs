@@ -10,7 +10,7 @@ pub struct Resign<'info> {
     #[account(mut)]
     pub adversary_user: Account<'info, User>,
 
-    #[account(mut)]
+    #[account(mut,address=Game::pda(game.owner,game.id).0)]
     pub game: Account<'info, Game>,
 }
 impl<'info> Resign<'info> {

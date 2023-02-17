@@ -1,3 +1,4 @@
+pub mod clockwork_check_timer;
 pub mod deposit;
 pub mod initialize_game;
 pub mod initialize_user;
@@ -8,6 +9,7 @@ pub mod offer_draw;
 pub mod resign;
 pub mod withdraw;
 
+pub use clockwork_check_timer::*;
 pub use deposit::*;
 pub use initialize_game::*;
 pub use initialize_user::*;

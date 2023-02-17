@@ -7,7 +7,7 @@ pub struct LeaveGame<'info> {
 
     #[account(mut,address=User::pda(payer.key()).0)]
     pub user: Account<'info, User>,
-    #[account(mut)]
+    #[account(mut,address=Game::pda(game.owner,game.id).0)]
     pub game: Account<'info, Game>,
 }
 impl<'info> LeaveGame<'info> {
