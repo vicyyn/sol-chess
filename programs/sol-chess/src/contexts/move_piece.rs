@@ -1,8 +1,4 @@
 use crate::*;
-use clockwork_sdk::{
-    state::{Thread, ThreadSettings, Trigger},
-    ThreadProgram,
-};
 
 #[derive(Accounts)]
 pub struct MovePiece<'info> {
@@ -14,15 +10,9 @@ pub struct MovePiece<'info> {
     #[account(mut)]
     pub adversary_user: Account<'info, User>,
 
-    #[account(mut,address = Thread::pubkey(game.key(),"game_thread".to_string()))]
-    pub game_thread: AccountInfo<'info>,
-    #[account(address = ThreadProgram::id())]
-    pub thread_program: Program<'info, ThreadProgram>,
-
     #[account(mut, address=Game::pda(game.owner,game.id).0)]
     pub game: Account<'info, Game>,
     pub clock: Sysvar<'info, Clock>,
-    pub system_program: Program<'info, System>,
 }
 
 impl<'info> MovePiece<'info> {
@@ -32,10 +22,7 @@ impl<'info> MovePiece<'info> {
             game,
             adversary_user,
             clock,
-            game_thread,
-            thread_program,
-            payer,
-            system_program,
+            ..
         } = self;
         let color = game.get_current_player_color();
 
@@ -77,71 +64,6 @@ impl<'info> MovePiece<'info> {
                 user.won_against(adversary_user.get_elo());
                 adversary_user.lost_against(user.get_elo());
             }
-        }
-
-        if game.is_first_move() {
-            let clockwork_check_timer = Instruction {
-                program_id: crate::ID,
-                accounts: vec![
-                    AccountMeta::new(user.key(), false),
-                    AccountMeta::new(adversary_user.key(), false),
-                    AccountMeta::new(game_thread.key(), true),
-                    AccountMeta::new(game.key(), false),
-                    AccountMeta::new_readonly(clock.key(), true),
-                ],
-                data: clockwork_sdk::utils::anchor_sighash("clockwork_check_timer").into(),
-            };
-
-            clockwork_sdk::cpi::thread_create(
-                CpiContext::new_with_signer(
-                    thread_program.to_account_info(),
-                    clockwork_sdk::cpi::ThreadCreate {
-                        authority: game.to_account_info(),
-                        payer: payer.to_account_info(),
-                        system_program: system_program.to_account_info(),
-                        thread: game_thread.to_account_info(),
-                    },
-                    &[&[
-                        SEED_GAME,
-                        &game.owner.as_ref(),
-                        &game.id.to_be_bytes(),
-                        &[game.bump],
-                    ]],
-                ),
-                "game_thread".to_string(),
-                clockwork_check_timer.into(),
-                Trigger::Account {
-                    address: game.key(),
-                    offset: 0,
-                    size: size_of::<Game>(),
-                },
-            )?;
-        } else {
-            // clockwork_sdk::cpi::thread_update(
-            //     CpiContext::new_with_signer(
-            //         thread_program.to_account_info(),
-            //         clockwork_sdk::cpi::ThreadUpdate {
-            //             authority: game.to_account_info(),
-            //             system_program: system_program.to_account_info(),
-            //             thread: game_thread.to_account_info(),
-            //         },
-            //         &[&[
-            //             SEED_GAME,
-            //             &game.owner.as_ref(),
-            //             &game.id.to_be_bytes(),
-            //             &[game.bump],
-            //         ]],
-            //     ),
-            //     ThreadSettings {
-            //         rate_limit: None,
-            //         fee: None,
-            //         kickoff_instruction: None,
-            //         trigger: Some(Trigger::Cron {
-            //             schedule: "*/10 * * * * * *".into(),
-            //             skippable: false,
-            //         }),
-            //     },
-            // )?;
         }
 
         game.update_time_control(color, clock.unix_timestamp);
