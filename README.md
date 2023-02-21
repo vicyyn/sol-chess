@@ -43,7 +43,7 @@ cargo run ./client/
 ## Propositions
 |         Feature         | Implemented |
 |-------------------------|:-----------:|
-| Tokens Wagers           |      ✅     |
-| Elo NFTs                |      ✅     |
-| Chess Bot with Clockwork|      ✅     |
-| Tournaments             |      ✅     |
+| Tokens Wagers           |      ❌     |
+| Elo NFTs                |      ❌     |
+| Chess Bot with Clockwork|      ❌     |
+| Tournaments             |      ❌     |
