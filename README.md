@@ -30,8 +30,6 @@ cargo run ./client/
 
 Anchor will generate a broken idl, use the one provided in `/idl`
 
-### Core Features
-
 ## Features
 |         Feature         | Implemented |
 |-------------------------|:-----------:|
